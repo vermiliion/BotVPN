@@ -146,7 +146,7 @@ EOF
     systemctl restart sellvpn.service >/dev/null 2>&1
     service cron restart
     printf "\033[5A\033[0J"
-    echo -e "       Status Server is "$(cek_status sellvpn.service)""
+    echo -e "Status Server is "$(cek_status sellvpn.service)""
     echo -e "${orange}─────────────────────────────────────────${neutral}"
     echo -e "${green}Bot has been installed and running.${neutral}"
     echo -e "${green}Type ${bold_white}/start${neutral} or ${bold_white}menu${neutral} in the telegram bot${neutral}"
