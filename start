@@ -81,34 +81,44 @@ server_app() {
     echo -e "${yellow}─────────────────────────────────────────${NC}"
     echo -e "${white}BOT SELLVPN TELEGRAM${NC}"
     echo -e "${yellow}─────────────────────────────────────────${NC}"
+    echo -e "${white}-${NC} server create user"
+    echo -e "${white}-${NC} server delete user"
+    echo -e "${white}-${NC} server addsaldo user"
+    echo -e "${white}-${NC} server ceksaldo user"
+    echo -e "${yellow}─────────────────────────────────────────${NC}"
     read -p "Masukkan token bot: " token
     while [ -z "$token" ]; do
         read -p "Masukkan token bot: " token
-        echo -e "${red}Token bot tidak boleh kosong.${NC}"
+        if [ -z "$token" ]; then
+            echo -e "${red}Token bot tidak boleh kosong. Silakan coba lagi.${NC}"
+        fi
     done
     while [ -z "$adminid" ]; do
         read -p "Masukkan admin ID: " adminid
-        echo -e "${red}Admin ID tidak boleh kosong.${NC}"
+        if [ -z "$adminid" ]; then
+            echo -e "${red}Admin ID tidak boleh kosong. Silakan coba lagi.${NC}"
+        fi
     done
-    while [ -z "$namastore" ]; do
+        while [ -z "$namastore" ]; do
         read -p "Masukkan nama store: " namastore
-        echo -e "${red}Nama store tidak boleh kosong.${NC}"
+        if [ -z "$namastore" ]; then
+            echo -e "${red}Nama store tidak boleh kosong. Silakan coba lagi.${NC}"
+        fi
     done
-    while [ -z "$keypaydisini" ]; do
-        read -p "Masukkan Keypaydisini: " keypaydisini
-        echo -e "${red}Keypaydisini tidak boleh kosong.${NC}"
+        while [ -z "$keypaydisini" ]; do
+        read -p "Masukkan Keypaydisni: " keypaydisini
+        if [ -z "$keypaydisini" ]; then
+            echo -e "${red}Nama keypaydisini tidak boleh kosong. Silakan coba lagi.${NC}"
+        fi
     done
-
-    cat <<EOF >/root/BotVPN/.vars.json
-{
-  "BOT_TOKEN": "$token",
-  "USER_ID": "$adminid",
-  "PAYDISINI_KEY": "$keypaydisini",
-  "NAMA_STORE": "$namastore",
-  "PORT": "50123"
-}
-EOF
-
+    rm -f /root/BotVPN/.vars.json
+    echo "{
+  \"BOT_TOKEN\": \"$token\",
+  \"USER_ID\": \"$adminid\",
+  \"PAYDISINI_KEY\": \"$keypaydisini\",
+  \"NAMA_STORE\": \"$namastore\",
+  \"PORT\": \"50123\"
+}" >/root/BotVPN/.vars.json
     cat >/etc/systemd/system/sellvpn.service <<EOF
 [Unit]
 Description=App Bot sellvpn Service
@@ -125,40 +135,32 @@ WorkingDirectory=/usr/bin
 [Install]
 WantedBy=multi-user.target
 EOF
-
-    cat >/usr/bin/server_sellvpn <<EOF
-#!/bin/bash
-USER_ID=$adminid
-BOT_TOKEN=$token
-curl -s -F chat_id="\$USER_ID" -F document=@"/root/BotVPN/sellvpn.db" "https://api.telegram.org/bot\$BOT_TOKEN/sendDocument" >/dev/null 2>&1
-EOF
-
-    cat >/usr/bin/sellvpn <<EOF
-#!/bin/bash
-cd /root/BotVPN
-node app.js
-EOF
-
-    chmod +x /usr/bin/server_sellvpn /usr/bin/sellvpn
-
-    cat >/etc/cron.d/server_sellvpn <<EOF
+echo '#!/bin/bash' >/usr/bin/server_sellvpn
+echo "USER_ID=$adminid" >>/usr/bin/server_sellvpn
+echo "BOT_TOKEN=$token" >>/usr/bin/server_sellvpn
+echo 'curl -s -F chat_id="$USER_ID" -F document=@"/root/BotVPN/sellvpn.db" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" >/dev/null 2>&1' >>/usr/bin/server_sellvpn
+echo '#!/bin/bash' >/usr/bin/sellvpn
+echo "cd /root/BotVPN" >>/usr/bin/sellvpn
+echo "node app.js" >>/usr/bin/sellvpn
+chmod +x /usr/bin/server_sellvpn
+chmod +x /usr/bin/sellvpn
+cat >/etc/cron.d/server_sellvpn <<EOF
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 0 */6 * * * root /usr/bin/server_sellvpn
 EOF
 
-    systemctl daemon-reload
-    systemctl enable sellvpn.service
-    systemctl start sellvpn.service
-    systemctl restart sellvpn.service
-    systemctl restart apisellvpn.service 2>/dev/null
+    systemctl daemon-reload >/dev/null 2>&1
+    systemctl enable sellvpn.service >/dev/null 2>&1
+    systemctl start sellvpn.service >/dev/null 2>&1
+    systemctl restart sellvpn.service >/dev/null 2>&1
+    systemctl restart apisellvpn.service >/dev/null 2>&1
     service cron restart
-
     printf "\033[5A\033[0J"
-    echo -e "Status Server adalah "$(cek_status sellvpn.service)""
+    echo -e "Status Server is "$(cek_status sellvpn.service)""
     echo -e "${yellow}─────────────────────────────────────────${NC}"
-    echo -e "${white}Bot telah berhasil dipasang dan berjalan.${NC}"
-    echo -e "${white}Ketik ${bold_white}/start${NC} atau ${bold_white}menu${NC} di Telegram bot Anda.${NC}"
+    echo -e "${white}Bot has been installed and running.${NC}"
+    echo -e "${white}Type ${bold_white}/start${NC} or ${bold_white}menu${NC} in the telegram bot${NC}"
 }
 
 if [[ ${1} == "sellvpn" ]]; then
