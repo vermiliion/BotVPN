@@ -29,7 +29,7 @@ async function createssh(username, password, exp, iplimit, serverId) {
             const sshData = response.data.data;
             const msg = `
 ──────────────────────           
-               *SSH ACCOUNT*
+                 *SSH ACCOUNT*
 ──────────────────────
 *Domain*   : \`${sshData.domain}\`
 *NS*       : \`${sshData.ns_domain}\`
@@ -99,7 +99,7 @@ async function createvmess(username, exp, quota, limitip, serverId) {
             const vmessData = response.data.data;
             const msg = `
 ────────────────────── 
-            *VMESS ACCOUNT*
+              *VMESS ACCOUNT*
 ──────────────────────
 *Username* : \`${vmessData.username}\`
 *Domain*   : \`${vmessData.domain}\`
@@ -173,7 +173,7 @@ async function createvless(username, exp, quota, limitip, serverId) {
             const vlessData = response.data.data;
             const msg = `
 ────────────────────── 
-              *VLESS ACCOUNT*
+               *VLESS ACCOUNT*
 ──────────────────────
 *Username* : \`${vlessData.username}\`
 *Domain*   : \`${vlessData.domain}\`
@@ -245,7 +245,7 @@ async function createtrojan(username, exp, quota, limitip, serverId) {
             const trojanData = response.data.data;
             const msg = `
 ────────────────────── 
-          *TROJAN ACCOUNT*
+            *TROJAN ACCOUNT*
 ──────────────────────
 *Username* : \`${trojanData.username}\`
 *Domain*   : \`${trojanData.domain}\`
@@ -314,7 +314,7 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
             const shadowsocksData = response.data.data;
             const msg = `
 ────────────────────── 
-     *SHADOWSOCKS ACCOUNT*
+      *SHADOWSOCKS ACCOUNT*
 ──────────────────────
 *Username* : \`${shadowsocksData.username}\`
 *Domain*   : \`${shadowsocksData.domain}\`
