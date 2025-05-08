@@ -337,7 +337,7 @@ ${shadowsocksData.ss_link_nontls}
 ${shadowsocksData.ss_link_grpc}
 \`\`\`
 ──────────────────────
-*Save Account*: [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
+*Save Account*: [Click Link](https://${shadowsocksData.domain}:81/ss-${shadowsocksData.username}.txt)
 ──────────────────────
 *Quota*: \`${shadowsocksData.quota === '0 GB' ? 'Unlimited' : shadowsocksData.quota}\`
 *IP Limit*: \`${shadowsocksData.ip_limit === '0' ? 'Unlimited' : shadowsocksData.ip_limit} IP\`
