@@ -28,51 +28,37 @@ async function createssh(username, password, exp, iplimit, serverId) {
           if (response.data.status === "success") {
             const sshData = response.data.data;
             const msg = `
-🌟 *AKUN SSH PREMIUM* 🌟
-
-🔹 *Informasi Akun*
-┌─────────────────────
-│ *Username* : \`${sshData.username}\`
-│ *Password* : \`${sshData.password}\`
-└─────────────────────
-┌─────────────────────
-│ *Domain*   : \`${sshData.domain}\`
-│ *NS*       : \`${sshData.ns_domain}\`
-│ *Port TLS* : \`443\`
-│ *Port HTTP*: \`80\`
-│ *OpenSSH*  : \`22\`
-│ *UdpSSH*   : \`1-65535\`
-│ *DNS*      : \`443, 53, 22\`
-│ *Dropbear* : \`443, 109\`
-│ *SSH WS*   : \`80\`
-│ *SSH SSL WS*: \`443\`
-│ *SSL/TLS*  : \`443\`
-│ *OVPN SSL* : \`443\`
-│ *OVPN TCP* : \`1194\`
-│ *OVPN UDP* : \`2200\`
-│ *BadVPN UDP*: \`7100, 7300, 7300\`
-└─────────────────────
-🔒 *PUBKEY*
-\`\`\`
-${sshData.pubkey}
-\`\`\`
-🔗 *Link dan Payload*
+──────────────────────           
+          🔸*SSH ACCOUNT*🔸
+──────────────────────
+*Domain*   : \`${sshData.domain}\`
+*NS*       : \`${sshData.ns_domain}\`
+*Username* : \`${sshData.username}\`
+*Password* : \`${sshData.password}\`
+*Port TLS* : \`443,8443\`
+*Port HTTP*: \`80,8080,2086,8880\`
+*OpenSSH*  : \`22\`
+*UdpSSH*   : \`1-65535\`
+*DNS*      : \`53, 2222\`
+*Dropbear* : \`109, 110\`
+*BadVPN UDP*: \`7300\`
+*PUBKEY*   :
+\`${sshData.pubkey}\`
 ───────────────────────
-WSS Payload      : 
+*HTTP CUSTOM*
+\`${sshData.domain}:80@${sshData.username}:${sshData.password}\`
+───────────────────────
+Websocket Payload: 
 \`\`\`
-GET wss://BUG.COM/ HTTP/1.1
+GET / HTTP/1.1
 Host: ${sshData.domain}
 Upgrade: websocket
 \`\`\`
-OpenVPN Link     : [Download OpenVPN](https://${sshData.domain}:81/allovpn.zip)
-Save Account Link: [Save Account](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
-───────────────────────
-┌─────────────────────
-│ Expires: \`${sshData.expired}\`
-│ IP Limit: \`${sshData.ip_limit}\`
-└─────────────────────
-
-✨ Selamat menggunakan layanan kami! ✨
+Save Account: [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
+──────────────────────
+IP Limit: \`${sshData.ip_limit}\`
+Expired: \`${sshData.expired}\`
+──────────────────────
 `;
               console.log('SSH account created successfully');
               return resolve(msg);
@@ -115,47 +101,38 @@ async function createvmess(username, exp, quota, limitip, serverId) {
           if (response.data.status === "success") {
             const vmessData = response.data.data;
             const msg = `
-🌟 *AKUN VMESS PREMIUM* 🌟
-
-🔹 *Informasi Akun*
-┌─────────────────────
-│ *Username* : \`${vmessData.username}\`
-│ *Domain*   : \`${vmessData.domain}\`
-│ *NS*       : \`${vmessData.ns_domain}\`
-│ *Port TLS* : \`443\`
-│ *Port HTTP*: \`80\`
-│ *Alter ID* : \`0\`
-│ *Security* : \`Auto\`
-│ *Network*  : \`Websocket (WS)\`
-│ *Path*     : \`/vmess\`
-│ *Path GRPC*: \`vmess-grpc\`
-└─────────────────────
-🔐 *URL VMESS TLS*
+────────────────────── 
+        🔸*VMESS ACCOUNT*🔸
+──────────────────────
+*Username* : \`${vmessData.username}\`
+*Domain*   : \`${vmessData.domain}\`
+*Port TLS* : \`443,8443\`
+*Port HTTP*: \`80,8080,2086,8880\`
+*UUID*     : \`${vmessData.uuid}\`
+*Alter ID* : \`0\`
+*Security* : \`Auto\`
+*Path*     : \`/vmess\`
+*Path gRPC*: \`vmess-grpc\`
+──────────────────────
+*URL TLS*
 \`\`\`
 ${vmessData.vmess_tls_link}
 \`\`\`
-🔓 *URL VMESS HTTP*
+*URL HTTP*
 \`\`\`
 ${vmessData.vmess_nontls_link}
 \`\`\`
-🔒 *URL VMESS GRPC*
+*URL gRPC*
 \`\`\`
 ${vmessData.vmess_grpc_link}
 \`\`\`
-🔒 *UUID & PUBKEY*
-\`\`\`
-${vmessData.uuid}
-\`\`\`
-\`\`\`
-${vmessData.pubkey}
-\`\`\`
-┌─────────────────────
-│ Expiry: \`${vmessData.expired}\`
-│ Quota: \`${vmessData.quota === '0 GB' ? 'Unlimited' : vmessData.quota}\`
-│ IP Limit: \`${vmessData.ip_limit === '0' ? 'Unlimited' : vmessData.ip_limit} IP\`
-└─────────────────────
-Save Account Link: [Save Account](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
-✨ Selamat menggunakan layanan kami! ✨
+──────────────────────
+Save Account: [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
+──────────────────────
+Quota: \`${vmessData.quota === '0 GB' ? 'Unlimited' : vmessData.quota}\`
+IP Limit: \`${vmessData.ip_limit === '0' ? 'Unlimited' : vmessData.ip_limit} IP\`
+Expired: \`${vmessData.expired}\`
+──────────────────────
 `;
               console.log('VMess account created successfully');
               return resolve(msg);
@@ -198,46 +175,36 @@ async function createvless(username, exp, quota, limitip, serverId) {
           if (response.data.status === "success") {
             const vlessData = response.data.data;
             const msg = `
-🌟 *AKUN VLESS PREMIUM* 🌟
-
-🔹 *Informasi Akun*
-┌─────────────────────
-│ *Username* : \`${vlessData.username}\`
-│ *Domain*   : \`${vlessData.domain}\`
-│ *NS*       : \`${vlessData.ns_domain}\`
-│ *Port TLS* : \`443\`
-│ *Port HTTP*: \`80\`
-│ *Security* : \`Auto\`
-│ *Network*  : \`Websocket (WS)\`
-│ *Path*     : \`/vless\`
-│ *Path GRPC*: \`vless-grpc\`
-└─────────────────────
-🔐 *URL VLESS TLS*
+────────────────────── 
+       🔸*VLESS ACCOUNT*🔸
+──────────────────────
+*Username* : \`${vlessData.username}\`
+*Domain*   : \`${vlessData.domain}\`
+*Port TLS* : \`443,8443\`
+*Port HTTP*: \`80,8080,2086,8880\`
+*UUID*     : \`${vlessData.uuid}\`
+*Path*     : \`/vless\`
+*Path gRPC*: \`vless-grpc\`
+──────────────────────
+*URL TLS*
 \`\`\`
 ${vlessData.vless_tls_link}
 \`\`\`
-🔓 *URL VLESS HTTP*
+*URL HTTP*
 \`\`\`
 ${vlessData.vless_nontls_link}
 \`\`\`
-🔒 *URL VLESS GRPC*
+*URL gRPC*
 \`\`\`
 ${vlessData.vless_grpc_link}
 \`\`\`
-🔒 *UUID & PUBKEY*
-\`\`\`
-${vlessData.uuid}
-\`\`\`
-\`\`\`
-${vlessData.pubkey}
-\`\`\`
-┌─────────────────────
-│ Expiry: \`${vlessData.expired}\`
-│ Quota: \`${vlessData.quota === '0 GB' ? 'Unlimited' : vlessData.quota}\`
-│ IP Limit: \`${vlessData.ip_limit === '0' ? 'Unlimited' : vlessData.ip_limit} IP\`
-└─────────────────────
-Save Account Link: [Save Account](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
-✨ Selamat menggunakan layanan kami! ✨
+──────────────────────
+Save Account: [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
+──────────────────────
+Quota: \`${vlessData.quota === '0 GB' ? 'Unlimited' : vlessData.quota}\`
+IP Limit: \`${vlessData.ip_limit === '0' ? 'Unlimited' : vlessData.ip_limit} IP\`
+Expired: \`${vlessData.expired}\`
+──────────────────────
 `;
               console.log('VLESS account created successfully');
               return resolve(msg);
@@ -280,39 +247,36 @@ async function createtrojan(username, exp, quota, limitip, serverId) {
           if (response.data.status === "success") {
             const trojanData = response.data.data;
             const msg = `
-🌟 *AKUN TROJAN PREMIUM* 🌟
-
-🔹 *Informasi Akun*
-┌─────────────────────
-│ *Username* : \`${trojanData.username}\`
-│ *Domain*   : \`${trojanData.domain}\`
-│ *NS*       : \`${trojanData.ns_domain}\`
-│ *Port TLS* : \`443\`
-│ *Port HTTP*: \`80\`
-│ *Security* : \`Auto\`
-│ *Network*  : \`Websocket (WS)\`
-│ *Path*     : \`/trojan-ws\`
-│ *Path GRPC*: \`trojan-grpc\`
-└─────────────────────
-🔐 *URL TROJAN TLS*
+────────────────────── 
+     🔸*TROJAN ACCOUNT*🔸
+──────────────────────
+*Username* : \`${trojanData.username}\`
+*Domain*   : \`${trojanData.domain}\`
+*Port TLS* : \`443,8443\`
+*Port HTTP*: \`80,8080,2086,8880\`
+*UUID*     : \`${trojanData.uuid}\`
+*Path*     : \`/trojan-ws\`
+*Path gRPC*: \`trojan-grpc\`
+──────────────────────
+*URL TLS*
 \`\`\`
 ${trojanData.trojan_tls_link}
 \`\`\`
-🔒 *URL TROJAN GRPC*
+*URL HTTP*
+\`\`\`
+${trojanData.trojan_nontls_link}
+\`\`\`
+*URL gRPC*
 \`\`\`
 ${trojanData.trojan_grpc_link}
 \`\`\`
-🔒 *PUBKEY*
-\`\`\`
-${trojanData.pubkey}
-\`\`\`
-┌─────────────────────
-│ Expiry: \`${trojanData.expired}\`
-│ Quota: \`${trojanData.quota === '0 GB' ? 'Unlimited' : trojanData.quota}\`
-│ IP Limit: \`${trojanData.ip_limit === '0' ? 'Unlimited' : trojanData.ip_limit} IP\`
-└─────────────────────
-Save Account Link: [Save Account](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
-✨ Selamat menggunakan layanan kami! ✨
+──────────────────────
+Save Account: [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
+──────────────────────
+Quota: \`${trojanData.quota === '0 GB' ? 'Unlimited' : trojanData.quota}\`
+IP Limit: \`${trojanData.ip_limit === '0' ? 'Unlimited' : trojanData.ip_limit} IP\`
+Expired: \`${trojanData.expired}\`
+──────────────────────
 `;
               console.log('Trojan account created successfully');
               return resolve(msg);
@@ -356,40 +320,36 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
           if (response.data.status === "success") {
             const shadowsocksData = response.data.data;
             const msg = `
-🌟 *AKUN SHADOWSOCKS PREMIUM* 🌟
-
-🔹 *Informasi Akun*
-┌─────────────────────
-│ *Username* : \`${shadowsocksData.username}\`
-│ *Domain*   : \`${shadowsocksData.domain}\`
-│ *NS*       : \`${shadowsocksData.ns_domain}\`
-│ *Port TLS* : \`443\`
-│ *Port HTTP*: \`80\`
-│ *Alter ID* : \`0\`
-│ *Security* : \`Auto\`
-│ *Network*  : \`Websocket (WS)\`
-│ *Path*     : \`/shadowsocks\`
-│ *Path GRPC*: \`shadowsocks-grpc\`
-└─────────────────────
-🔐 *URL SHADOWSOCKS TLS*
+────────────────────── 
+🔸*SHADOWSOCKS ACCOUNT*🔸
+──────────────────────
+*Username* : \`${shadowsocksData.username}\`
+*Domain*   : \`${shadowsocksData.domain}\`
+*Port TLS* : \`443,8443\`
+*Port HTTP*: \`80,8080,2086,8880\`
+*UUID*     : \`${shadowsocksData.uuid}\`
+*Path*     : \`/ss-ws\`
+*Path gRPC*: \`ss-grpc\`
+──────────────────────
+*URL TLS*
 \`\`\`
-${shadowsocksData.ss_link_ws}
+${shadowsocksData.ss_tls_link}
 \`\`\`
-🔒 *URL SHADOWSOCKS GRPC*
+*URL HTTP*
 \`\`\`
-${shadowsocksData.ss_link_grpc}
+${shadowsocksData.ss_nontls_link}
 \`\`\`
-🔒 *PUBKEY*
+*URL gRPC*
 \`\`\`
-${shadowsocksData.pubkey}
+${shadowsocksData.ss_grpc_link}
 \`\`\`
-┌─────────────────────
-│ Expiry: \`${shadowsocksData.expired}\`
-│ Quota: \`${shadowsocksData.quota === '0 GB' ? 'Unlimited' : shadowsocksData.quota}\`
-│ IP Limit: \`${shadowsocksData.ip_limit === '0' ? 'Unlimited' : shadowsocksData.ip_limit} IP\`
-└─────────────────────
-Save Account Link: [Save Account](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
-✨ Selamat menggunakan layanan kami! ✨
+──────────────────────
+Save Account: [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
+──────────────────────
+Quota: \`${shadowsocksData.quota === '0 GB' ? 'Unlimited' : shadowsocksData.quota}\`
+IP Limit: \`${shadowsocksData.ip_limit === '0' ? 'Unlimited' : shadowsocksData.ip_limit} IP\`
+Expired: \`${shadowsocksData.expired}\`
+──────────────────────
 `;
               console.log('Shadowsocks account created successfully');
               return resolve(msg);
