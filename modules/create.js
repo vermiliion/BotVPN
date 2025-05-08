@@ -29,7 +29,7 @@ async function createssh(username, password, exp, iplimit, serverId) {
             const sshData = response.data.data;
             const msg = `
 ──────────────────────           
-          🔸*SSH ACCOUNT*🔸
+               *SSH ACCOUNT*
 ──────────────────────
 *Domain*   : \`${sshData.domain}\`
 *NS*       : \`${sshData.ns_domain}\`
@@ -39,25 +39,22 @@ async function createssh(username, password, exp, iplimit, serverId) {
 *Port HTTP*: \`80,8080,2086,8880\`
 *OpenSSH*  : \`22\`
 *UdpSSH*   : \`1-65535\`
-*DNS*      : \`53, 2222\`
-*Dropbear* : \`109, 110\`
+*DNS*      : \`53,2222\`
+*Dropbear* : \`109,110\`
 *BadVPN UDP*: \`7300\`
-*PUBKEY*   :
+*PUBKEY* :
 \`${sshData.pubkey}\`
 ───────────────────────
 *HTTP CUSTOM*
 \`${sshData.domain}:80@${sshData.username}:${sshData.password}\`
 ───────────────────────
-Websocket Payload: 
-\`\`\`
-GET / HTTP/1.1
-Host: ${sshData.domain}
-Upgrade: websocket
-\`\`\`
-Save Account: [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
+*Payload*: 
+\`GET /cdn-cgi/trace HTTP/1.1[crlf]Host: Bug_Kalian[crlf][crlf]GET-RAY / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]\`
 ──────────────────────
-IP Limit: \`${sshData.ip_limit}\`
-Expired: \`${sshData.expired}\`
+*Save Account*: [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
+──────────────────────
+*IP Limit*: \`${sshData.ip_limit}\`
+*Expired*: \`${sshData.expired}\`
 ──────────────────────
 `;
               console.log('SSH account created successfully');
@@ -102,7 +99,7 @@ async function createvmess(username, exp, quota, limitip, serverId) {
             const vmessData = response.data.data;
             const msg = `
 ────────────────────── 
-        🔸*VMESS ACCOUNT*🔸
+            *VMESS ACCOUNT*
 ──────────────────────
 *Username* : \`${vmessData.username}\`
 *Domain*   : \`${vmessData.domain}\`
@@ -114,24 +111,24 @@ async function createvmess(username, exp, quota, limitip, serverId) {
 *Path*     : \`/vmess\`
 *Path gRPC*: \`vmess-grpc\`
 ──────────────────────
-*URL TLS*
+*URL TLS:*
 \`\`\`
 ${vmessData.vmess_tls_link}
 \`\`\`
-*URL HTTP*
+*URL HTTP:*
 \`\`\`
 ${vmessData.vmess_nontls_link}
 \`\`\`
-*URL gRPC*
+*URL gRPC:*
 \`\`\`
 ${vmessData.vmess_grpc_link}
 \`\`\`
 ──────────────────────
-Save Account: [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
+*Save Account*: [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
 ──────────────────────
-Quota: \`${vmessData.quota === '0 GB' ? 'Unlimited' : vmessData.quota}\`
-IP Limit: \`${vmessData.ip_limit === '0' ? 'Unlimited' : vmessData.ip_limit} IP\`
-Expired: \`${vmessData.expired}\`
+*Quota*: \`${vmessData.quota === '0 GB' ? 'Unlimited' : vmessData.quota}\`
+*IP Limit*: \`${vmessData.ip_limit === '0' ? 'Unlimited' : vmessData.ip_limit} IP\`
+*Expired*: \`${vmessData.expired}\`
 ──────────────────────
 `;
               console.log('VMess account created successfully');
@@ -176,7 +173,7 @@ async function createvless(username, exp, quota, limitip, serverId) {
             const vlessData = response.data.data;
             const msg = `
 ────────────────────── 
-       🔸*VLESS ACCOUNT*🔸
+              *VLESS ACCOUNT*
 ──────────────────────
 *Username* : \`${vlessData.username}\`
 *Domain*   : \`${vlessData.domain}\`
@@ -186,24 +183,24 @@ async function createvless(username, exp, quota, limitip, serverId) {
 *Path*     : \`/vless\`
 *Path gRPC*: \`vless-grpc\`
 ──────────────────────
-*URL TLS*
+*URL TLS:*
 \`\`\`
 ${vlessData.vless_tls_link}
 \`\`\`
-*URL HTTP*
+*URL HTTP:*
 \`\`\`
 ${vlessData.vless_nontls_link}
 \`\`\`
-*URL gRPC*
+*URL gRPC:*
 \`\`\`
 ${vlessData.vless_grpc_link}
 \`\`\`
 ──────────────────────
-Save Account: [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
+*Save Account*: [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
 ──────────────────────
-Quota: \`${vlessData.quota === '0 GB' ? 'Unlimited' : vlessData.quota}\`
-IP Limit: \`${vlessData.ip_limit === '0' ? 'Unlimited' : vlessData.ip_limit} IP\`
-Expired: \`${vlessData.expired}\`
+*Quota*: \`${vlessData.quota === '0 GB' ? 'Unlimited' : vlessData.quota}\`
+*IP Limit*: \`${vlessData.ip_limit === '0' ? 'Unlimited' : vlessData.ip_limit} IP\`
+*Expired*: \`${vlessData.expired}\`
 ──────────────────────
 `;
               console.log('VLESS account created successfully');
@@ -248,7 +245,7 @@ async function createtrojan(username, exp, quota, limitip, serverId) {
             const trojanData = response.data.data;
             const msg = `
 ────────────────────── 
-     🔸*TROJAN ACCOUNT*🔸
+          *TROJAN ACCOUNT*
 ──────────────────────
 *Username* : \`${trojanData.username}\`
 *Domain*   : \`${trojanData.domain}\`
@@ -258,24 +255,20 @@ async function createtrojan(username, exp, quota, limitip, serverId) {
 *Path*     : \`/trojan-ws\`
 *Path gRPC*: \`trojan-grpc\`
 ──────────────────────
-*URL TLS*
+*URL TLS:*
 \`\`\`
 ${trojanData.trojan_tls_link}
 \`\`\`
-*URL HTTP*
-\`\`\`
-${trojanData.trojan_nontls_link}
-\`\`\`
-*URL gRPC*
+*URL gRPC:*
 \`\`\`
 ${trojanData.trojan_grpc_link}
 \`\`\`
 ──────────────────────
-Save Account: [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
+*Save Account*: [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
 ──────────────────────
-Quota: \`${trojanData.quota === '0 GB' ? 'Unlimited' : trojanData.quota}\`
-IP Limit: \`${trojanData.ip_limit === '0' ? 'Unlimited' : trojanData.ip_limit} IP\`
-Expired: \`${trojanData.expired}\`
+*Quota*: \`${trojanData.quota === '0 GB' ? 'Unlimited' : trojanData.quota}\`
+*IP Limit*: \`${trojanData.ip_limit === '0' ? 'Unlimited' : trojanData.ip_limit} IP\`
+*Expired*: \`${trojanData.expired}\`
 ──────────────────────
 `;
               console.log('Trojan account created successfully');
@@ -321,7 +314,7 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
             const shadowsocksData = response.data.data;
             const msg = `
 ────────────────────── 
-🔸*SHADOWSOCKS ACCOUNT*🔸
+     *SHADOWSOCKS ACCOUNT*
 ──────────────────────
 *Username* : \`${shadowsocksData.username}\`
 *Domain*   : \`${shadowsocksData.domain}\`
@@ -331,24 +324,24 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
 *Path*     : \`/ss-ws\`
 *Path gRPC*: \`ss-grpc\`
 ──────────────────────
-*URL TLS*
+*URL TLS:*
 \`\`\`
 ${shadowsocksData.ss_tls_link}
 \`\`\`
-*URL HTTP*
+*URL HTTP:*
 \`\`\`
 ${shadowsocksData.ss_nontls_link}
 \`\`\`
-*URL gRPC*
+*URL gRPC:*
 \`\`\`
 ${shadowsocksData.ss_grpc_link}
 \`\`\`
 ──────────────────────
-Save Account: [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
+*Save Account*: [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
 ──────────────────────
-Quota: \`${shadowsocksData.quota === '0 GB' ? 'Unlimited' : shadowsocksData.quota}\`
-IP Limit: \`${shadowsocksData.ip_limit === '0' ? 'Unlimited' : shadowsocksData.ip_limit} IP\`
-Expired: \`${shadowsocksData.expired}\`
+*Quota*: \`${shadowsocksData.quota === '0 GB' ? 'Unlimited' : shadowsocksData.quota}\`
+*IP Limit*: \`${shadowsocksData.ip_limit === '0' ? 'Unlimited' : shadowsocksData.ip_limit} IP\`
+*Expired*: \`${shadowsocksData.expired}\`
 ──────────────────────
 `;
               console.log('Shadowsocks account created successfully');
