@@ -326,11 +326,11 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
 ──────────────────────
 *URL TLS:*
 \`\`\`
-${shadowsocksData.ss_link_tls}
+${shadowsocksData.ss_link_ws}
 \`\`\`
 *URL HTTP:*
 \`\`\`
-${shadowsocksData.ss_link_ws}
+${shadowsocksData.ss_link_nontls}
 \`\`\`
 *URL gRPC:*
 \`\`\`
