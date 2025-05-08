@@ -326,15 +326,15 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
 ──────────────────────
 *URL TLS:*
 \`\`\`
-${shadowsocksData.ss_tls_link}
+${shadowsocksData.ss_link_tls}
 \`\`\`
 *URL HTTP:*
 \`\`\`
-${shadowsocksData.ss_nontls_link}
+${shadowsocksData.ss_link_ws}
 \`\`\`
 *URL gRPC:*
 \`\`\`
-${shadowsocksData.ss_grpc_link}
+${shadowsocksData.ss_link_grpc}
 \`\`\`
 ──────────────────────
 *Save Account*: [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
