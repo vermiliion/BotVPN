@@ -151,8 +151,8 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 EOF
 
     systemctl daemon-reload >/dev/null 2>&1
-    systemctl enable sellvpn.service >/dev/null 2>&1
     systemctl start sellvpn.service >/dev/null 2>&1
+    systemctl enable sellvpn.service >/dev/null 2>&1
     systemctl restart sellvpn.service >/dev/null 2>&1
     systemctl restart apisellvpn.service >/dev/null 2>&1
     service cron restart
