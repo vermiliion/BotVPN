@@ -19,7 +19,7 @@ const PAYDISINI_KEY = vars.PAYDISINI_KEY;
 const BOT_TOKEN = vars.BOT_TOKEN;
 const port = vars.PORT || 50123;
 const ADMIN = vars.USER_ID; 
-const NAMA_STORE = vars.NAMA_STORE || '@LITESTORES';
+const NAMA_STORE = vars.NAMA_STORE || '@FTVPNSTORES';
 const bot = new Telegraf(BOT_TOKEN);
 const adminIds = ADMIN;
 console.log('Bot initialized');
@@ -148,23 +148,18 @@ async function sendMainMenu(ctx) {
     console.error('Kesalahan saat mengambil jumlah pengguna:', err.message);
   }
 
-  const messageText = `*Hai Sobat Selamat datang di ${NAMA_STORE},
-Buat Hari - Hari Mu Menyenangkan* 🚀
-
-Kini Membeli atau Order VPN jadi Lebih mudah loh...
-Dengan Membeli VPN di BOT Kami Yang serba otomatis ini,
-Nikmati layanan VPN yang mudah dan cepat
-Dan Jelajahi Dunia Internet Tanpa Batas.
-
-Ayoo tunggu apalagi...
-Order Sekarang Di Bot Ini Yaa hehe...
-✅ Happy Surfing* 🚀
+  const messageText = `*Selamat datang di ${NAMA_STORE},
+Powered by FTVPN* 🚀
+Bot VPN serba otomatis untuk membeli
+layanan VPN dengan mudah dan cepat
+Nikmati kemudahan dan kecepatan
+dalam layanan VPN dengan bot kami!
 
 ⏳ *Uptime bot:* ${days} Hari
 🌐 *Server tersedia:* ${jumlahServer}
 👥 *Jumlah pengguna:* ${jumlahPengguna}
 
-*Silahkan pilih opsi layanan:*`;
+*Silakan pilih opsi layanan:*`;
 
   try {
     await ctx.editMessageText(messageText, {
