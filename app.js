@@ -150,16 +150,16 @@ async function sendMainMenu(ctx) {
 
   const messageText = `*Hai Sobat Selamat datang di ${NAMA_STORE},
 Buat Hari - Hari Mu Menyenangkan* 🚀
-
- Kini Membeli atau Order VPN jadi Lebih mudah loh...
- Dengan Membeli VPN di BOT Kami Yang serba otomatis ini,
- Nikmati layanan VPN yang mudah dan cepat
- Dan Jelajahi Dunia Internet Tanpa Batas.
-
+
+Kini Membeli atau Order VPN jadi Lebih mudah loh...
+Dengan Membeli VPN di BOT Kami Yang serba otomatis ini,
+Nikmati layanan VPN yang mudah dan cepat
+Dan Jelajahi Dunia Internet Tanpa Batas.
+
 Ayoo tunggu apalagi...
 Order Sekarang Di Bot Ini Yaa hehe...
 ✅ Happy Surfing* 🚀
-
+
 ⏳ *Uptime bot:* ${days} Hari
 🌐 *Server tersedia:* ${jumlahServer}
 👥 *Jumlah pengguna:* ${jumlahPengguna}
