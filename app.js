@@ -148,16 +148,17 @@ async function sendMainMenu(ctx) {
     console.error('Kesalahan saat mengambil jumlah pengguna:', err.message);
   }
 
-  const messageText = `*Selamat datang di ${NAMA_STORE},
-Powered by FTVPN* 🚀
-Bot VPN serba otomatis untuk membeli
-layanan VPN dengan mudah dan cepat
-Nikmati kemudahan dan kecepatan
-dalam layanan VPN dengan bot kami!
+  const messageText = `*Selamat datang di ${NAMA_STORE}* 🚀
+ *Keunggulan Bot:*
+_Bot VPN serba otomatis_
+_Beli VPN Jadi Lebih Mudah Dan Cepat_
+_Tanpa Harus Menuggu Admin Online_
+_Pembayaran Via Qris_
 
-⏳ *Uptime bot:* ${days} Hari
-🌐 *Server tersedia:* ${jumlahServer}
-👥 *Jumlah pengguna:* ${jumlahPengguna}
+⏳ *Uptime:* ${days} Hari
+🌐 *Server:* ${jumlahServer}
+👥 *User:* ${jumlahPengguna}
+Contact : @freenet_on
 
 *Silakan pilih opsi layanan:*`;
 
