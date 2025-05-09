@@ -32,7 +32,7 @@ async function createssh(username, password, exp, iplimit, serverId) {
                  *SSH ACCOUNT*
 ──────────────────────
 *Domain*   : \`${sshData.domain}\`
-*NS*       : \`${sshData.ns_domain}\`
+*Nameserver*: \`${sshData.nemo}\`
 *Username* : \`${sshData.username}\`
 *Password* : \`${sshData.password}\`
 *Port TLS* : \`443,8443\`
@@ -42,8 +42,7 @@ async function createssh(username, password, exp, iplimit, serverId) {
 *DNS*      : \`53,2222\`
 *Dropbear* : \`109,110\`
 *BadVPN UDP*: \`7300\`
-*PUBKEY* :
-\`${sshData.pubkey}\`
+*Pub Key* : \`${sshData.biji}\`
 ───────────────────────
 *HTTP CUSTOM*
 \`${sshData.domain}:80@${sshData.username}:${sshData.password}\`
