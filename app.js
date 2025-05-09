@@ -148,23 +148,24 @@ async function sendMainMenu(ctx) {
     console.error('Kesalahan saat mengambil jumlah pengguna:', err.message);
   }
 
-  const messageText = `*Hai, Selamat Datang Di âœ…
+  const messageText = `*Hai, Selamat Datang Di,
 Bot Order VPN ${NAMA_STORE}*ğŸš€
 
-*Keunggulan Bot:*
-âœ… Beli VPN Jadi Lebih Mudah
-âœ… Tanpa Menuggu Admin Online
-âœ… Pembayaran Via Qris
+Ä *Keunggulan Bot:*
+Ã Beli VPN Jadi Lebih Mudah Dan Cepat
+Ã Tanpa Harus Menuggu Admin Online
+À Pembayaran Via Qris
 
-*Contact :* @freenet_on
-Yuk, Order Sekarang...!!!
-Happy Surfing ğŸš€
+Ä Yuk, Order Sekarang...!!!
+À Happy Surfing ğŸš€
 
-ğŸš€ *Uptime bot:* ${days} Hari
-ğŸš€ *Total Server:* ${jumlahServer}
-ğŸš€ *Total Users:* ${jumlahPengguna}
+Ä *Informasi Bot*
+ÃUptime: ${days} Hari
+ÃServer: ${jumlahServer}
+ÃUser: ${jumlahPengguna}
+ÀContact : @freenet_on
 
-*Silahkan Pilih Opsi Bot ğŸ“:*`;
+*Silahkan Pilih Opsi Bot :*`;
 
   try {
     await ctx.editMessageText(messageText, {
