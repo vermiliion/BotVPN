@@ -148,18 +148,17 @@ async function sendMainMenu(ctx) {
     console.error('Kesalahan saat mengambil jumlah pengguna:', err.message);
   }
 
-  const messageText = `
-*Hai, Selamat Datang Di ✅
+  const messageText = `*Hai, Selamat Datang Di ✅
 Bot Order VPN ${NAMA_STORE}*🚀
 
 *Keunggulan Bot:*
-✅ _Beli VPN Jadi Lebih Mudah,_
-✅ _Tanpa Menuggu Admin Online,_
-✅ _Pembayaran Via Qris,_
+✅ Beli VPN Jadi Lebih Mudah
+✅ Tanpa Menuggu Admin Online
+✅ Pembayaran Via Qris
 
 *Contact :* @freenet_on
-_Yuk, Order Sekarang...!!!_
-*Happy Surfing*🚀
+Yuk, Order Sekarang...!!!
+Happy Surfing 🚀
 
 🚀 *Uptime bot:* ${days} Hari
 🚀 *Total Server:* ${jumlahServer}
