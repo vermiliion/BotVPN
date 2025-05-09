@@ -151,18 +151,18 @@ async function sendMainMenu(ctx) {
   const messageText = `*Hai, Selamat Datang Di,
 Bot Order VPN ${NAMA_STORE}*ðŸš€
 
-Ä *Keunggulan Bot:*
+ *Keunggulan Bot:*
 Ã Beli VPN Jadi Lebih Mudah Dan Cepat
 Ã Tanpa Harus Menuggu Admin Online
 À Pembayaran Via Qris
 
-Ä Yuk, Order Sekarang...!!!
+Ã Yuk, Order Sekarang...!!!
 À Happy Surfing ðŸš€
 
-Ä *Informasi Bot*
+ *Informasi Bot*
 ÃUptime: ${days} Hari
 ÃServer: ${jumlahServer}
-ÃUser: ${jumlahPengguna}
+ÃUser: ${jumlahPengguna}
 ÀContact : @freenet_on
 
 *Silahkan Pilih Opsi Bot :*`;
