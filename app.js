@@ -149,11 +149,13 @@ async function sendMainMenu(ctx) {
   }
 
   const messageText = `*Hallo Sobat Internet 🚀,
-Selamat Datang Di Bot VPN ${NAMA_STORE}*,
-Membeli VPN Kini Jauh Lebih Mudah dan cepat
-Jelajahi Dunia Internet Tanpa Batas
-Nikmati Koneksi Internet Yang Cepat Dan Stabil
-dalam layanan VPN dengan bot kami!
+Selamat Datang Di Bot VPN ${NAMA_STORE}*
+
+- Beli VPN Kini Jauh Lebih Mudah dan cepat...
+- Jelajahi Dunia Internet Tanpa Batas...
+- Nikmati Koneksi Internet Yang Cepat Dan Stabil,
+- Dalam Layanan VPN dengan Bot kami..!!!
+- Tunggu Apalagi Yuk, Order Sekarang...
 
 ⏳ *Uptime bot:* ${days} Hari
 🌐 *Server tersedia:* ${jumlahServer}
