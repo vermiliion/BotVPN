@@ -149,16 +149,16 @@ async function sendMainMenu(ctx) {
   }
 
   const messageText = `*Selamat datang di ${NAMA_STORE}* 🚀
- *Keunggulan Bot:*
-_Bot VPN serba otomatis_
-_Beli VPN Jadi Lebih Mudah Dan Cepat_
-_Tanpa Harus Menuggu Admin Online_
-_Pembayaran Via Qris_
+*Keunggulan Bot:*
+Bot VPN serba otomatis
+Beli VPN Jadi Lebih Mudah Dan Cepat
+Tanpa Harus Menuggu Admin Online
+Pembayaran Via Qris
+Contact Admin: @freenet_on
 
 ⏳ *Uptime:* ${days} Hari
 🌐 *Server:* ${jumlahServer}
 👥 *User:* ${jumlahPengguna}
-Contact : @freenet_on
 
 *Silakan pilih opsi layanan:*`;
 
