@@ -40,7 +40,11 @@ sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.di
    ```bash
    node app.js
    ```
-
+## Uninstall Bot
+- Paste Perintah ini di vps
+```
+wget -O hapus.sh https://raw.githubusercontent.com/vermiliion/BotVPN/main/hapus.sh && chmod +x hapus.sh && ./hapus.sh
+```
 ## Struktur Proyek
 
 - `app.js`: File utama yang mengatur bot dan server.
