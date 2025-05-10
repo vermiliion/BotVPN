@@ -18,7 +18,7 @@ hapus_bot_lama() {
     rm -f /etc/systemd/system/sellvpn.service
     rm -f /usr/bin/sellvpn /usr/bin/server_sellvpn /etc/cron.d/server_sellvpn
     rm -rf /root/BotVPN
-    rm -rf /root/BotVPN
+    rm -rf /root/BotVPN2
 
     # Hapus dari pm2 jika ada
     if command -v pm2 &> /dev/null; then
