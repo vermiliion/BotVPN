@@ -6,6 +6,7 @@ const app = express();
 const axios = require('axios');
 const QRISPayment = require('qris-payment');
 const winston = require('winston');
+const path = require('path');
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -2577,36 +2578,31 @@ setInterval(checkQRISStatus, 10000);
 
 app.listen(port, () => {
   bot.launch().then(() => {
-      logger.info('Bot telah dimulai');
+    logger.info('Bot telah dimulai');
 
-      
-      const path = require('path');
+    function kirimBackupDatabase() {
+      const dbPath = path.resolve('./sellvpn.db');
+      const waktu = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+      const caption = ` *Backup Database*\n Waktu: ${waktu}`;
 
-      function kirimBackupDatabase() {
-        const dbPath = path.resolve('./sellvpn.db');
-        const waktu = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-        const caption = ` *Backup Database*\n Waktu: ${waktu}`;
+      bot.telegram.sendDocument(vars.USER_ID, { source: dbPath }, {
+        caption,
+        parse_mode: 'Markdown'
+      }).then(() => {
+        logger.info(`Backup database berhasil dikirim ke admin ID ${vars.USER_ID}`);
+      }).catch((error) => {
+        logger.error(`Gagal mengirim backup database ke admin ${vars.USER_ID}: ${error.message}`);
+      });
+    }
 
-        const adminArray = Array.isArray(adminIds) ? adminIds : [adminIds];
+    // Backup pertama dikirim setelah 15 detik
+    setTimeout(kirimBackupDatabase, 15_000);
 
-        adminArray.forEach(async (adminId) => {
-          try {
-            await bot.telegram.sendDocument(adminId, { source: dbPath }, {
-              caption,
-              parse_mode: 'Markdown'
-            });
-            logger.info(`Backup database berhasil dikirim ke admin ID ${adminId}`);
-          } catch (error) {
-            logger.error(`Gagal mengirim backup database ke admin ${adminId}:`, error.message);
-          }
-        });
-      }
+    // Backup selanjutnya setiap 5 jam
+    setInterval(kirimBackupDatabase, 5 * 60 * 60 * 1000);
 
-      setTimeout(kirimBackupDatabase, 15_000); 
-      setInterval(kirimBackupDatabase, 5 * 60 * 60 * 1000);
-      
   }).catch((error) => {
-      logger.error('Error saat memulai bot:', error);
+    logger.error('Error saat memulai bot:', error);
   });
 
   logger.info(`Server berjalan di port ${port}`);
