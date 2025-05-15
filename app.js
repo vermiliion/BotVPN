@@ -2365,15 +2365,14 @@ async function processDeposit(ctx, amount) {
       `⚠️ *Catatan:*\n` +
       `- Pembayaran akan otomatis terverifikasi\n` +
       `- Jangan tutup halaman ini\n` +
-      `- Jika pembayaran berhasil, saldo akan otomatis ditambahkan` +
-      `- Untuk Beli Script Install Bot chat: @freenet_on`;
+      `- Jika pembayaran berhasil, saldo akan otomatis ditambahkan`;
 
     // Menyusun inline keyboard
     const inlineKeyboard = [
       [
         {
-          text: "🌀 Join Channel Admin",
-          url: "https://t.me/freenetlite"
+          text: "🛠 Hubungi Admin",
+          url: "https://t.me/kytxz"
         }
       ]
     ];
