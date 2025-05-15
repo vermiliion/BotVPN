@@ -2366,8 +2366,7 @@ async function processDeposit(ctx, amount) {
       `- Pembayaran akan otomatis terverifikasi\n` +
       `- Jangan tutup halaman ini\n` +
       `- Jika pembayaran berhasil, saldo akan otomatis ditambahkan` +
-      `- Untuk Beli Script Install Bot chat: @freenet_on`
-;
+      `- Untuk Beli Script Install Bot chat: @freenet_on`;
 
     // Menyusun inline keyboard
     const inlineKeyboard = [
