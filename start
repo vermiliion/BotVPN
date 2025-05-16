@@ -1,5 +1,5 @@
 #!/bin/bash
-clear
+# Colors
 green="\e[38;5;82m"
 red="\e[38;5;196m"
 neutral="\e[0m"
@@ -10,14 +10,13 @@ purple="\e[38;5;141m"
 bold_white="\e[1;37m"
 reset="\e[0m"
 pink="\e[38;5;205m"
-clear
+
 hapus_bot_lama() {
     echo -e "${orange}Menghapus bot lama...${neutral}"
     systemctl stop sellvpn.service 2>/dev/null
     systemctl disable sellvpn.service 2>/dev/null
     rm -f /etc/systemd/system/sellvpn.service
     rm -f /usr/bin/sellvpn /usr/bin/server_sellvpn /etc/cron.d/server_sellvpn
-    rm -rf /root/BotVPN
     rm -rf /root/BotVPN
 
     if command -v pm2 &> /dev/null; then
@@ -30,132 +29,74 @@ hapus_bot_lama() {
 }
 
 pasang_package() {
-  echo -e "${blue}Memulai pengecekan dan instalasi dependensi...${reset}"
+    echo -e "${blue}Memulai pengecekan dan instalasi dependensi...${reset}"
 
-  if ! command -v npm >/dev/null 2>&1; then
-    echo -e "${orange}Menginstall npm...${reset}"
-    apt update && apt install -y npm
-  else
-    echo -e "${green}npm sudah terinstall.${reset}"
-  fi
-
-  if ! command -v pm2 >/dev/null 2>&1; then
-    echo -e "${orange} Menginstall PM2...${reset}"
-    npm install -g pm2
-  else
-    echo -e "${green} PM2 sudah terinstall.${reset}"
-  fi
-
-  dependencies=(
-    build-essential
-    libcairo2-dev
-    libpango1.0-dev
-    libjpeg-dev
-    libgif-dev
-    librsvg2-dev
-    pkg-config
-    libpixman-1-dev
-  )
-
-  for pkg in "${dependencies[@]}"; do
-    if dpkg -s "$pkg" >/dev/null 2>&1; then
-      echo -e "${green} $pkg sudah terinstall.${reset}"
-    else
-      echo -e "${yellow} Menginstall $pkg...${reset}"
-      apt install -y "$pkg"
+    # Install Node.js v18 (stabil untuk Debian 10+/Ubuntu 20+)
+    if ! command -v node >/dev/null 2>&1 || ! node -v | grep -q 'v18'; then
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        apt-get install -y nodejs
     fi
-  done
 
-  echo -e "${pink} Semua dependensi telah diperiksa dan diinstal bila diperlukan.${reset}"
-}
+    # Downgrade npm ke versi 10 agar kompatibel
+    npm install -g npm@10
 
-
-cek_status() {
-    pm2 status | grep -q sellvpn && echo "aktif" || echo "nonaktif"
+    # Install dependencies APT
+    apt update
+    apt install -y build-essential libcairo2-dev libpango1.0-dev \
+        libjpeg-dev libgif-dev librsvg2-dev pkg-config libpixman-1-dev git curl cron
 }
 
 setup_bot() {
-    timedatectl set-timezone Asia/Jakarta || echo -e "${red}Failed to set timezone to Jakarta${neutral}"
-    
-    if ! dpkg -s nodejs >/dev/null 2>&1; then
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - || echo -e "${red}Failed to download Node.js setup${neutral}"
-        apt-get install -y nodejs || echo -e "${red}Failed to install Node.js${neutral}"
-        npm install -g npm@latest
-    else
-        echo -e "${green}Node.js is already installed, skipping...${neutral}"
-    fi
+    timedatectl set-timezone Asia/Jakarta
 
-    if [ ! -f /root/BotVPN/app.js ]; then
+    # Clone Bot
+    if [ ! -d /root/BotVPN ]; then
         git clone https://github.com/vermiliion/BotVPN.git /root/BotVPN
     fi
 
-    if ! npm list --prefix /root/BotVPN express telegraf axios moment sqlite3 >/dev/null 2>&1; then
-        npm install --prefix /root/BotVPN sqlite3 express crypto telegraf axios dotenv
-    fi
-
-    if [ -n "$(ls -A /root/BotVPN)" ]; then
-        chmod +x /root/BotVPN/*
-    fi
+    # Install dependencies
+    cd /root/BotVPN
+    npm install sqlite3 express crypto telegraf axios dotenv canvas
+    chmod +x /root/BotVPN/*
 }
 
 server_app() {
-    clear
     echo -e "${orange}─────────────────────────────────────────${neutral}"
     echo -e "${green}- BOT SELLVPN TELEGRAM MOD BY LITE & XWAN${neutral}"
     echo -e "${orange}─────────────────────────────────────────${neutral}"
-    echo -e "${green}-${neutral} server create user"
-    echo -e "${green}-${neutral} server delete user"
-    echo -e "${green}-${neutral} server addsaldo user"
-    echo -e "${green}-${neutral} server ceksaldo user"
-    echo -e "${orange}─────────────────────────────────────────${neutral}"
-    read -p "Masukkan token bot: " token
-    while [ -z "$token" ]; do
-        read -p "Masukkan token bot: " token
-        if [ -z "$token" ]; then
-            echo -e "${red}Token bot tidak boleh kosong. Silakan coba lagi.${neutral}"
-        fi
-    done
-    while [ -z "$adminid" ]; do
-        read -p "Masukkan admin ID: " adminid
-        if [ -z "$adminid" ]; then
-            echo -e "${red}Admin ID tidak boleh kosong. Silakan coba lagi.${neutral}"
-        fi
-    done
-    while [ -z "$namastore" ]; do
-        read -p "Masukkan nama store: " namastore
-        if [ -z "$namastore" ]; then
-            echo -e "${red}Nama store tidak boleh kosong. Silakan coba lagi.${neutral}"
-        fi
-    done
-    while [ -z "$dataqris" ]; do
-        read -p "Masukkan DATA QRIS: " dataqris
-        if [ -z "$dataqris" ]; then
-            echo -e "${red}DATA QRIS tidak boleh kosong. Silakan coba lagi.${neutral}"
-        fi
-    done
-    while [ -z "$merchantid" ]; do
-        read -p "Masukkan MERCHANT ID: " merchantid
-        if [ -z "$merchantid" ]; then
-            echo -e "${red}MERCHANT ID tidak boleh kosong. Silakan coba lagi.${neutral}"
-        fi
-    done
-    while [ -z "$apikey" ]; do
-        read -p "Masukkan API KEY: " apikey
-        if [ -z "$apikey" ]; then
-            echo -e "${red}API KEY tidak boleh kosong. Silakan coba lagi.${neutral}"
-        fi
-    done
-    rm -f /root/BotVPN/.vars.json
-    echo "{
-  \"BOT_TOKEN\": \"$token\",
-  \"USER_ID\": \"$adminid\",
-  \"NAMA_STORE\": \"$namastore\",
-  \"PORT\": \"50123\",
-  \"DATA_QRIS\": \"$dataqris\",
-  \"MERCHANT_ID\": \"$merchantid\",
-  \"API_KEY\": \"$apikey\"
-}" >/root/BotVPN/.vars.json
 
+    read -p "Masukkan token bot: " token
+    while [ -z "$token" ]; do read -p "Masukkan token bot: " token; done
+
+    read -p "Masukkan admin ID: " adminid
+    while [ -z "$adminid" ]; do read -p "Masukkan admin ID: " adminid; done
+
+    read -p "Masukkan nama store: " namastore
+    while [ -z "$namastore" ]; do read -p "Masukkan nama store: " namastore; done
+
+    read -p "Masukkan DATA QRIS: " dataqris
+    while [ -z "$dataqris" ]; do read -p "Masukkan DATA QRIS: " dataqris; done
+
+    read -p "Masukkan MERCHANT ID: " merchantid
+    while [ -z "$merchantid" ]; do read -p "Masukkan MERCHANT ID: " merchantid; done
+
+    read -p "Masukkan API KEY: " apikey
+    while [ -z "$apikey" ]; do read -p "Masukkan API KEY: " apikey; done
+
+    # Simpan konfigurasi ke file .vars.json
+    cat >/root/BotVPN/.vars.json <<EOF
+{
+  "BOT_TOKEN": "$token",
+  "USER_ID": "$adminid",
+  "NAMA_STORE": "$namastore",
+  "PORT": "50123",
+  "DATA_QRIS": "$dataqris",
+  "MERCHANT_ID": "$merchantid",
+  "API_KEY": "$apikey"
+}
+EOF
+
+    # systemd service
     cat >/etc/systemd/system/sellvpn.service <<EOF
 [Unit]
 Description=App Bot sellvpn Service
@@ -172,39 +113,43 @@ WorkingDirectory=/usr/bin
 [Install]
 WantedBy=multi-user.target
 EOF
-echo '#!/bin/bash' >/usr/bin/server_sellvpn
-echo "USER_ID=$adminid" >>/usr/bin/server_sellvpn
-echo "BOT_TOKEN=$token" >>/usr/bin/server_sellvpn
-echo 'curl -s -F chat_id="$USER_ID" -F document=@"/root/BotVPN/sellvpn.db" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" >/dev/null 2>&1' >>/usr/bin/server_sellvpn
-echo '#!/bin/bash' >/usr/bin/sellvpn
-echo "cd /root/BotVPN" >>/usr/bin/sellvpn
-echo "node app.js" >>/usr/bin/sellvpn
-chmod +x /usr/bin/server_sellvpn
-chmod +x /usr/bin/sellvpn
-cat >/etc/cron.d/server_sellvpn <<EOF
+
+    # File autorun
+    echo '#!/bin/bash' >/usr/bin/sellvpn
+    echo "cd /root/BotVPN" >>/usr/bin/sellvpn
+    echo "node app.js" >>/usr/bin/sellvpn
+
+    chmod +x /usr/bin/sellvpn
+
+    # File cron backup
+    echo '#!/bin/bash' >/usr/bin/server_sellvpn
+    echo "USER_ID=$adminid" >>/usr/bin/server_sellvpn
+    echo "BOT_TOKEN=$token" >>/usr/bin/server_sellvpn
+    echo 'curl -s -F chat_id="$USER_ID" -F document=@"/root/BotVPN/sellvpn.db" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" >/dev/null 2>&1' >>/usr/bin/server_sellvpn
+
+    chmod +x /usr/bin/server_sellvpn
+
+    cat >/etc/cron.d/server_sellvpn <<EOF
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 0 */6 * * * root /usr/bin/server_sellvpn
 EOF
 
-    systemctl daemon-reload >/dev/null 2>&1
-    systemctl enable sellvpn.service >/dev/null 2>&1
-    systemctl start sellvpn.service >/dev/null 2>&1
-    systemctl restart sellvpn.service >/dev/null 2>&1
+    systemctl daemon-reload
+    systemctl enable sellvpn
+    systemctl start sellvpn
     service cron restart
-    printf "\033[5A\033[0J"
-    echo -e "Status Server is "$(cek_status sellvpn.service)""
-    echo -e "${orange}─────────────────────────────────────────${neutral}"
-    echo -e "${green}Bot has been installed and running.${neutral}"
-    echo -e "${green}Type ${bold_white}/start${neutral} or ${bold_white}menu${neutral} in the telegram bot${neutral}"
+
+    echo -e "Status Server: $(systemctl is-active sellvpn)"
+    echo -e "${green}Bot berhasil diinstal dan sedang berjalan.${neutral}"
 }
 
-if [[ ${1} == "sellvpn" ]]; then
+if [[ $1 == "sellvpn" ]]; then
     hapus_bot_lama
     pasang_package
     setup_bot
     server_app
 else
-    echo -e "${red}Invalid command. Use: ${yellow}start sellvpn${neutral}"
+    echo -e "${red}Perintah tidak valid. Gunakan: ${yellow}start sellvpn${neutral}"
     exit 1
-fi 
+fi
