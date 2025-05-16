@@ -61,6 +61,7 @@ setup_bot() {
 }
 
 server_app() {
+    clear
     echo -e "${orange}─────────────────────────────────────────${neutral}"
     echo -e "${green}- BOT SELLVPN TELEGRAM MOD BY LITE & XWAN${neutral}"
     echo -e "${orange}─────────────────────────────────────────${neutral}"
