@@ -109,7 +109,7 @@ Restart=always
 User=root
 Environment=PATH=/usr/bin:/usr/local/bin
 Environment=NODE_ENV=production
-WorkingDirectory=/usr/bin
+WorkingDirectory=/root/BotVPN
 
 [Install]
 WantedBy=multi-user.target
@@ -119,7 +119,6 @@ EOF
     echo '#!/bin/bash' >/usr/bin/sellvpn
     echo "cd /root/BotVPN" >>/usr/bin/sellvpn
     echo "node app.js" >>/usr/bin/sellvpn
-
     chmod +x /usr/bin/sellvpn
 
     # File cron backup
@@ -127,7 +126,6 @@ EOF
     echo "USER_ID=$adminid" >>/usr/bin/server_sellvpn
     echo "BOT_TOKEN=$token" >>/usr/bin/server_sellvpn
     echo 'curl -s -F chat_id="$USER_ID" -F document=@"/root/BotVPN/sellvpn.db" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" >/dev/null 2>&1' >>/usr/bin/server_sellvpn
-
     chmod +x /usr/bin/server_sellvpn
 
     cat >/etc/cron.d/server_sellvpn <<EOF
