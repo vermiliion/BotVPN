@@ -19,21 +19,19 @@
 sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt update -y && apt install dos2unix -y && apt install -y git && apt install -y curl && curl -L -k -sS https://raw.githubusercontent.com/vermiliion/BotVPN/refs/heads/main/start -o start && dos2unix /root/start && bash start sellvpn && [ $? -eq 0 ] && rm -f start
 ```
 
-## install Manual
+## untuk edit bot token dll
 
-1. Clone repository ini:
-   ```bash
-   git clone https://github.com/vermiliion/BotVPN.git
-   ```
-2. Masuk ke direktori proyek:
+
+1. Masuk ke direktori proyek:
    ```bash
    cd BotVPN
    ```
-3. Install dependencies:
-   ```bash
-   npm i sqlite3 express telegraf axios
+2. tulis perintah
    ```
-4. Siapkan konfigurasi di `.vars.json`:
+   nano .vars.json
+   ```
+4. konfigurasiny seperti ini
+
    ```json
    {
      "BOT_TOKEN": "your_telegram_bot_token",
@@ -45,17 +43,7 @@ sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.di
      "API_KEY": "your_api_key"
    }
    ```
-5. Jalankan bot:
-   ```bash
-   node app.js
-   ```
-6. Service BOT:
-   ```bash
-   npm i -g pm2
-   pm2 start app.js --name sellvpn
-   pm2 startup
-   pm2 save
-   ```
+
 ## Uninstall Bot
 - Paste Perintah ini di vps
 ```
