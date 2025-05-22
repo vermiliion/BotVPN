@@ -143,61 +143,95 @@ bot.command(['start', 'menu'], async (ctx) => {
 
 bot.command('admin', async (ctx) => {
   logger.info('Admin menu requested');
-  
+
   if (!adminIds.includes(ctx.from.id)) {
     await ctx.reply('🚫 Anda tidak memiliki izin untuk mengakses menu admin.');
     return;
   }
-
-  await sendAdminMenu(ctx);
+  
+await sendAdminMenu(ctx);
 });
+
 async function sendMainMenu(ctx) {
   const keyboard = [
     [
-      { text: '➕ Buat Akun', callback_data: 'service_create' },
+      { text: '✏️ Buat Akun', callback_data: 'service_create' },
       { text: '♻️ Perpanjang Akun', callback_data: 'service_renew' }
     ],
     [
       { text: '💰 TopUp Saldo', callback_data: 'topup_saldo' },
-      { text: '💳 Cek Saldo', callback_data: 'cek_saldo' }
+      { text: '🚀 Channel', url: 'https://t.me/freenetlite' }
     ],
   ];
 
   const uptime = os.uptime();
   const days = Math.floor(uptime / (60 * 60 * 24));
-  
   let jumlahServer = 0;
-  try {
-    const row = await new Promise((resolve, reject) => {
-      db.get('SELECT COUNT(*) AS count FROM Server', (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row);
-        }
-      });
-    });
-    jumlahServer = row.count;
-  } catch (err) {
-    logger.error('Kesalahan saat mengambil jumlah server:', err.message);
-  }
   let jumlahPengguna = 0;
+  let saldo = 0;
+
   try {
-    const row = await new Promise((resolve, reject) => {
-      db.get('SELECT COUNT(*) AS count FROM users', (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row);
-        }
+    // Hitung jumlah server
+    jumlahServer = await new Promise((resolve, reject) => {
+      db.get('SELECT COUNT(*) AS count FROM Server', (err, row) => {
+        if (err) reject(err);
+        else resolve(row ? row.count : 0);
       });
     });
-    jumlahPengguna = row.count;
-  } catch (err) {
-    logger.error('Kesalahan saat mengambil jumlah pengguna:', err.message);
-  }
 
-  const messageText = `*Selamat datang di ${NAMA_STORE},\nMENU BOT ADMIN* 🚀\n__Bot VPN serba otomatis untuk membeli\nlayanan VPN dengan mudah dan cepat__\n\n✨ *Channel:* @freenetlite\n✨ *Group:* @litechatgroup\n\n⏳ *Uptime bot:* ${days} Hari\n🌐 *Server tersedia:* ${jumlahServer}\n👥 *Jumlah pengguna:* ${jumlahPengguna}\n\n*Silakan pilih opsi layanan:*`;
+    // Hitung jumlah pengguna
+    jumlahPengguna = await new Promise((resolve, reject) => {
+      db.get('SELECT COUNT(*) AS count FROM users', (err, row) => {
+        if (err) reject(err);
+        else resolve(row ? row.count : 0);
+      });
+    });
+
+    // Dapatkan saldo pengguna
+    const userId = ctx.from.id;
+    saldo = await new Promise((resolve, reject) => {
+      db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], (err, row) => {
+        if (err) {
+          logger.error('❌ Kesalahan saat memeriksa saldo:', err.message);
+          return reject('❌ *Terjadi kesalahan saat memeriksa saldo Anda. Silakan coba lagi nanti.*');
+        }
+        resolve(row ? row.saldo : 0);
+      });
+    });
+
+  } catch (err) {
+    logger.error('Kesalahan saat mengambil data:', err.message);
+  }
+ const userId = ctx.from.id;
+  const messageText = `
+━━━━━━━━━━━━━━━━━━━━━━━
+🌀 *${NAMA_STORE} - VPN PREMIUM* 🌀
+━━━━━━━━━━━━━━━━━━━━━━━
+🤖 *Status Bot:*
+
+🕒 Aktif Selama : *${days} hari*
+🌐 Server Tersedia : *${jumlahServer}*
+👥 Pengguna Terdaftar : *${jumlahPengguna}*
+👤 User ID : *${userId}*
+💳 Saldo Kamu : *${saldo}*
+━━━━━━━━━━━━━━━━━━━━━━━
+💠 *LAYANAN KAMI:*
+🔸SSH (Support Semua Operator)
+🔸XRAY (TLS , Non-TLS & gRPC)
+🔸Vmess,Vless,Trojan,Shadowsocks
+━━━━━━━━━━━━━━━━━━━━━━━
+📌 *FITUR UNGGULAN:*
+✅ Full Speed & Low Ping
+✅ Support Bug Host / SNI
+✅ Masa Aktif Fleksibel
+✅ Kuota & Limit IP Custom
+✅ Auto Create Akun 24 Jam
+✅ Support Wildcard
+━━━━━━━━━━━━━━━━━━━━━━━
+*Layanan cocok untuk Streaming & Browsing!*
+
+*Silakan pilih menu di bawah untuk order:*
+`;
 
   try {
     if (ctx.updateType === 'callback_query') {
@@ -341,6 +375,111 @@ bot.command('addsaldo', async (ctx) => {
       });
   });
 });
+//case register
+//Aksi untuk registrasi IP
+bot.action('register_ip', async (ctx) => {
+    const userId = ctx.from.id;
+    db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], async (err, row) => {
+        if (err) {
+            logger.error('Kesalahan saat memeriksa saldo:', err.message);
+            return;
+        }
+
+        if (!row || row.saldo <= 0) {
+            await ctx.reply('🚫 Anda tidak memiliki cukup saldo untuk mendaftar IP. Silakan top up saldo Anda.');
+            return;
+        }
+
+        // Menyediakan opsi durasi registrasi dan harga
+        const options = [
+            { duration: '30 hari', price: 15000 },
+            { duration: '60 hari', price: 25000 },
+            { duration: '90 hari', price: 35000 },
+            { duration: '120 hari', price: 45000 },
+        ];
+
+        // Membuat tombol untuk setiap opsi
+        const buttons = options.map((option, index) => {
+            return [Markup.button.callback(`${option.duration} - ${option.price} saldo`, `select_duration_${index}`)];
+        });
+
+        // Mengirim pesan dengan tombol
+        await ctx.reply('🔄 Pilih durasi registrasi IP:', Markup.inlineKeyboard(buttons));
+    });
+});
+
+// Fungsi untuk menangani pemilihan durasi
+bot.action(/select_duration_(\d+)/, async (ctx) => {
+    const userId = ctx.from.id;
+    const index = parseInt(ctx.match[1]);
+    const options = [
+        { duration: '30 hari', price: 15000 },
+        { duration: '60 hari', price: 25000 },
+        { duration: '90 hari', price: 35000 },
+        { duration: '120 hari', price: 45000 },
+    ];
+    const selectedOption = options[index];
+    const hargaRegistrasi = selectedOption.price;
+
+    // Mendapatkan saldo pengguna
+    db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], async (err, row) => {
+        if (err) {
+            logger.error('Kesalahan saat memeriksa saldo:', err.message);
+            return;
+        }
+
+        if (row.saldo < hargaRegistrasi) {
+            await ctx.reply('🚫 Anda tidak memiliki cukup saldo untuk mendaftar IP. Saldo Anda tidak mencukupi.');
+            return;
+        }
+
+        // Minta pengguna memasukkan IP yang ingin didaftarkan
+        await ctx.reply('🔄 Masukkan IP yang ingin didaftarkan:');
+
+        // Atur listener untuk menerima IP
+        bot.on('text', async (ipCtx) => {
+            await handleRegisterIp(ipCtx, userId, hargaRegistrasi, selectedOption.duration);
+        });
+    });
+});
+
+// Fungsi untuk menangani registrasi IP
+async function handleRegisterIp(msg, userId, hargaRegistrasi, duration) {
+    const ip = msg.text.trim();
+    if (!ip) {
+        await bot.sendMessage(userId, '⚠️ IP tidak valid. Silakan masukkan IP yang valid.');
+        return;
+    }
+
+    const saldo = await getUserBalance(userId);
+
+    if (saldo < hargaRegistrasi) {
+        await bot.sendMessage(userId, '🚫 Anda tidak memiliki cukup saldo untuk mendaftar IP. Saldo Anda tidak mencukupi.');
+        return;
+    }
+
+    // Jika memiliki saldo cukup, kurangi saldo dan lakukan pendaftaran IP
+    db.run('UPDATE users SET saldo = saldo - ? WHERE user_id = ?', [hargaRegistrasi, userId], async (err) => {
+        if (err) {
+            logger.error('Kesalahan saat mengurangi saldo:', err.message);
+            await bot.sendMessage(userId, '❌ Terjadi kesalahan saat memproses pendaftaran IP.');
+        } else {
+            // Proses skrip registrasi IP dengan tambahan parameter durasi
+            exec(`bash xwanregis.sh ${ip} ${userId} ${duration.split(' ')[0]}`, (error, stdout, stderr) => {
+                if (error) {
+                    bot.sendMessage(userId, `🚨 Terjadi kesalahan:\n${error.message}`);
+                } else {
+                    bot.sendMessage(userId, `✅ IP berhasil didaftarkan!\nOutput:\n${stdout}`);
+                }
+            });
+        }
+    });
+}
+//comingsoon
+
+//case trial
+
+
 bot.command('addserver', async (ctx) => {
   const userId = ctx.message.from.id;
   if (!adminIds.includes(userId)) {
@@ -607,16 +746,16 @@ async function handleServiceAction(ctx, action) {
   let keyboard;
   if (action === 'create') {
     keyboard = [
-      [{ text: '🍁 SSH MANAGER', callback_data: 'create_ssh' }],
-      [{ text: '🎋 VMESS MANAGER', callback_data: 'create_vmess' }, { text: '🍂 VLESS MANAGER', callback_data: 'create_vless' }],
-      [{ text: '🍄 TROJAN MANAGER', callback_data: 'create_trojan' }, { text: '🪴  SHADOWSOCKS MANAGER', callback_data: 'create_shadowsocks' }],
+      [{ text: '✨ SSH', callback_data: 'create_ssh' }],
+      [{ text: '✨ Vmess', callback_data: 'create_vmess' }, { text: '✨ Vless', callback_data: 'create_vless' }],
+      [{ text: '✨ Trojan', callback_data: 'create_trojan' }, { text: '✨  Shadowsocks', callback_data: 'create_shadowsocks' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   } else if (action === 'renew') {
     keyboard = [
-      [{ text: 'Perpanjang Ssh/Ovpn', callback_data: 'renew_ssh' }],
-      [{ text: 'Perpanjang Vmess', callback_data: 'renew_vmess' }, { text: 'Perpanjang Vless', callback_data: 'renew_vless' }],
-      [{ text: 'Perpanjang Trojan', callback_data: 'renew_trojan' }, { text: 'Perpanjang Shadowsocks', callback_data: 'renew_shadowsocks' }],
+      [{ text: '🌀Renew SSH', callback_data: 'renew_ssh' }],
+      [{ text: '🌀Renew Vmess', callback_data: 'renew_vmess' }, { text: '🌀Renew Vless', callback_data: 'renew_vless' }],
+      [{ text: '🌀Renew Trojan', callback_data: 'renew_trojan' }, { text: '🌀Renew Shadowsocks', callback_data: 'renew_shadowsocks' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   }
@@ -680,7 +819,7 @@ async function sendAdminMenu(ctx) {
     logger.info('Admin menu sent');
   } catch (error) {
     if (error.response && error.response.error_code === 400) {
-      await ctx.reply('🔐 **MANAGER ADMIN MENU:**', {
+      await ctx.reply('Admin Service Manager', {
         reply_markup: {
           inline_keyboard: adminKeyboard
         }
@@ -2096,7 +2235,7 @@ async function handleDepositState(ctx, userId, data) {
       return await ctx.answerCbQuery('⚠️ Jumlah tidak boleh kosong!', { show_alert: true });
     }
     if (parseInt(currentAmount) < 100) {
-      return await ctx.answerCbQuery('⚠️ Jumlah minimal top-up adalah  100 Perak Ya Kak...!!!', { show_alert: true });
+      return await ctx.answerCbQuery('⚠️ Jumlah minimal adalah 100 perak!', { show_alert: true });
     }
     global.depositState[userId].action = 'confirm_amount';
     await processDeposit(ctx, currentAmount);
@@ -2371,8 +2510,8 @@ async function processDeposit(ctx, amount) {
     const inlineKeyboard = [
       [
         {
-          text: "🗣️ Join Channel Mimin ya",
-          url: "https://t.me/freenetlite"
+          text: "Hubungi Admin‼️",
+          url: "https://t.me/freenet_on"
         }
       ]
     ];
@@ -2512,7 +2651,7 @@ async function checkQRISStatus() {
 }
 
 function keyboard_abc() {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const buttons = [];
   for (let i = 0; i < alphabet.length; i += 3) {
     const row = alphabet.slice(i, i + 3).split('').map(char => ({
@@ -2527,7 +2666,7 @@ function keyboard_abc() {
 }
 
 function keyboard_nomor() {
-  const alphabet = '1234567890';
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const buttons = [];
   for (let i = 0; i < alphabet.length; i += 3) {
     const row = alphabet.slice(i, i + 3).split('').map(char => ({
