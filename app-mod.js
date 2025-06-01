@@ -380,110 +380,6 @@ bot.command('addsaldo', async (ctx) => {
       });
   });
 });
-//case register
-//Aksi untuk registrasi IP
-bot.action('register_ip', async (ctx) => {
-    const userId = ctx.from.id;
-    db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], async (err, row) => {
-        if (err) {
-            logger.error('Kesalahan saat memeriksa saldo:', err.message);
-            return;
-        }
-
-        if (!row || row.saldo <= 0) {
-            await ctx.reply('🚫 Anda tidak memiliki cukup saldo untuk mendaftar IP. Silakan top up saldo Anda.');
-            return;
-        }
-
-        // Menyediakan opsi durasi registrasi dan harga
-        const options = [
-            { duration: '30 hari', price: 15000 },
-            { duration: '60 hari', price: 25000 },
-            { duration: '90 hari', price: 35000 },
-            { duration: '120 hari', price: 45000 },
-        ];
-
-        // Membuat tombol untuk setiap opsi
-        const buttons = options.map((option, index) => {
-            return [Markup.button.callback(`${option.duration} - ${option.price} saldo`, `select_duration_${index}`)];
-        });
-
-        // Mengirim pesan dengan tombol
-        await ctx.reply('🔄 Pilih durasi registrasi IP:', Markup.inlineKeyboard(buttons));
-    });
-});
-
-// Fungsi untuk menangani pemilihan durasi
-bot.action(/select_duration_(\d+)/, async (ctx) => {
-    const userId = ctx.from.id;
-    const index = parseInt(ctx.match[1]);
-    const options = [
-        { duration: '30 hari', price: 15000 },
-        { duration: '60 hari', price: 25000 },
-        { duration: '90 hari', price: 35000 },
-        { duration: '120 hari', price: 45000 },
-    ];
-    const selectedOption = options[index];
-    const hargaRegistrasi = selectedOption.price;
-
-    // Mendapatkan saldo pengguna
-    db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], async (err, row) => {
-        if (err) {
-            logger.error('Kesalahan saat memeriksa saldo:', err.message);
-            return;
-        }
-
-        if (row.saldo < hargaRegistrasi) {
-            await ctx.reply('🚫 Anda tidak memiliki cukup saldo untuk mendaftar IP. Saldo Anda tidak mencukupi.');
-            return;
-        }
-
-        // Minta pengguna memasukkan IP yang ingin didaftarkan
-        await ctx.reply('🔄 Masukkan IP yang ingin didaftarkan:');
-
-        // Atur listener untuk menerima IP
-        bot.on('text', async (ipCtx) => {
-            await handleRegisterIp(ipCtx, userId, hargaRegistrasi, selectedOption.duration);
-        });
-    });
-});
-
-// Fungsi untuk menangani registrasi IP
-async function handleRegisterIp(msg, userId, hargaRegistrasi, duration) {
-    const ip = msg.text.trim();
-    if (!ip) {
-        await bot.sendMessage(userId, '⚠️ IP tidak valid. Silakan masukkan IP yang valid.');
-        return;
-    }
-
-    const saldo = await getUserBalance(userId);
-
-    if (saldo < hargaRegistrasi) {
-        await bot.sendMessage(userId, '🚫 Anda tidak memiliki cukup saldo untuk mendaftar IP. Saldo Anda tidak mencukupi.');
-        return;
-    }
-
-    // Jika memiliki saldo cukup, kurangi saldo dan lakukan pendaftaran IP
-    db.run('UPDATE users SET saldo = saldo - ? WHERE user_id = ?', [hargaRegistrasi, userId], async (err) => {
-        if (err) {
-            logger.error('Kesalahan saat mengurangi saldo:', err.message);
-            await bot.sendMessage(userId, '❌ Terjadi kesalahan saat memproses pendaftaran IP.');
-        } else {
-            // Proses skrip registrasi IP dengan tambahan parameter durasi
-            exec(`bash xwanregis.sh ${ip} ${userId} ${duration.split(' ')[0]}`, (error, stdout, stderr) => {
-                if (error) {
-                    bot.sendMessage(userId, `🚨 Terjadi kesalahan:\n${error.message}`);
-                } else {
-                    bot.sendMessage(userId, `✅ IP berhasil didaftarkan!\nOutput:\n${stdout}`);
-                }
-            });
-        }
-    });
-}
-//comingsoon
-
-//case trial
-
 
 bot.command('addserver', async (ctx) => {
   const userId = ctx.message.from.id;
@@ -751,16 +647,16 @@ async function handleServiceAction(ctx, action) {
   let keyboard;
   if (action === 'create') {
     keyboard = [
-      [{ text: '✨SSH✨', callback_data: 'create_ssh' }],
-      [{ text: '✨Vmess✨', callback_data: 'create_vmess' }, { text: '✨Vless✨', callback_data: 'create_vless' }],
-      [{ text: '✨Trojan✨', callback_data: 'create_trojan' }, { text: '✨Shadowsocks✨', callback_data: 'create_shadowsocks' }],
+      [{ text: '✨ SSH', callback_data: 'create_ssh' }],
+      [{ text: '✨ Vmess', callback_data: 'create_vmess' }, { text: '✨ Vless', callback_data: 'create_vless' }],
+      [{ text: '✨ Trojan', callback_data: 'create_trojan' }, { text: '✨ Shadowsocks', callback_data: 'create_shadowsocks' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   } else if (action === 'renew') {
     keyboard = [
-      [{ text: '🏷️Renew SSH🏷️', callback_data: 'renew_ssh' }],
-      [{ text: '🏷️Renew Vmess🏷️', callback_data: 'renew_vmess' }, { text: '🏷️Renew Vless🏷️', callback_data: 'renew_vless' }],
-      [{ text: '🏷️Renew Trojan🏷️', callback_data: 'renew_trojan' }, { text: '🏷️Renew Shadowsocks🏷️', callback_data: 'renew_shadowsocks' }],
+      [{ text: '🏷️ Renew SSH️', callback_data: 'renew_ssh' }],
+      [{ text: '🏷️ Renew Vmess', callback_data: 'renew_vmess' }, { text: '🏷️ Renew Vless', callback_data: 'renew_vless' }],
+      [{ text: '🏷️ Renew Trojan', callback_data: 'renew_trojan' }, { text: '🏷 ️Renew Shadowsocks', callback_data: 'renew_shadowsocks' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   }
