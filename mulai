@@ -121,19 +121,6 @@ EOF
     echo "node app-x.js" >>/usr/bin/sellvpn
     chmod +x /usr/bin/sellvpn
 
-    # File cron backup
-    echo '#!/bin/bash' >/usr/bin/server_sellvpn
-    echo "USER_ID=$adminid" >>/usr/bin/server_sellvpn
-    echo "BOT_TOKEN=$token" >>/usr/bin/server_sellvpn
-    echo 'curl -s -F chat_id="$USER_ID" -F document=@"/root/BotVPN/sellvpn.db" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" >/dev/null 2>&1' >>/usr/bin/server_sellvpn
-    chmod +x /usr/bin/server_sellvpn
-
-    cat >/etc/cron.d/server_sellvpn <<EOF
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-0 */6 * * * root /usr/bin/server_sellvpn
-EOF
-
     systemctl daemon-reload
     systemctl enable sellvpn
     systemctl start sellvpn
