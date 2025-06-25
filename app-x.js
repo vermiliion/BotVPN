@@ -6,6 +6,9 @@ const app = express();
 const axios = require('axios');
 const QRISPayment = require('qris-payment');
 const winston = require('winston');
+const fetch = require("node-fetch");
+const FormData = require("form-data");
+const FOLDER_TEMPATDB = "/root/BotVPN/sellvpn.db";
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -2783,6 +2786,37 @@ async function processMatchingPayment(deposit, matchingTransaction, uniqueCode) 
 }
 
 setInterval(checkQRISStatus, 10000);
+
+async function kirimFileKeTelegram() {
+  const form = new FormData();
+
+  if (!fs.existsSync(FOLDER_TEMPATDB)) {
+    console.log("❌ File tidak ditemukan:", FOLDER_TEMPATDB);
+    return;
+  }
+
+  form.append("chat_id", ADMIN);
+  form.append("document", fs.createReadStream(FOLDER_TEMPATDB));
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+      method: "POST",
+      body: form,
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      console.log(`[${new Date().toLocaleTimeString()}] ✅ File terkirim ke Telegram.`);
+    } else {
+      console.error("❌ Gagal mengirim file:", data.description);
+    }
+  } catch (err) {
+    console.error("❌ Error saat mengirim file:", err.message);
+  }
+}
+
+// Kirim otomatis setiap 5 jam
+setInterval(kirimFileKeTelegram, 5 * 60 * 60 * 1000);
 
 app.listen(port, () => {
   bot.launch().then(() => {
