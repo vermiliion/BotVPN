@@ -60,6 +60,8 @@ setup_bot() {
     npm rebuild canvas
     rm -rf node_modules
     npm install
+    npm uninstall node-fetch
+    npm install node-fetch@2
     chmod +x /root/BotVPN/*
 }
 
