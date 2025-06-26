@@ -21,7 +21,7 @@ async function trialssh(username, password, exp, iplimit, serverId) {
 
       const domain = server.domain;
       const auth = server.auth;
-      const param = `:5888/createssh?user=${username}&password=${password}&exp=${exp}&iplimit=${iplimit}&auth=${auth}`;
+      const param = `:5888/trialssh?user=${username}&password=${password}&exp=${exp}&iplimit=${iplimit}&auth=${auth}`;
       const url = `http://${domain}${param}`;
       axios.get(url)
         .then(response => {
@@ -90,7 +90,7 @@ async function trialvmess(username, exp, quota, limitip, serverId) {
 
       const domain = server.domain;
       const auth = server.auth;
-      const param = `:5888/createvmess?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
+      const param = `:5888/trialvmess?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
       const url = `http://${domain}${param}`;
       axios.get(url)
         .then(response => {
@@ -164,7 +164,7 @@ async function trialvless(username, exp, quota, limitip, serverId) {
 
       const domain = server.domain;
       const auth = server.auth;
-      const param = `:5888/createvless?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
+      const param = `:5888/trialvless?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
       const url = `http://${domain}${param}`;
       axios.get(url)
         .then(response => {
@@ -236,7 +236,7 @@ async function trialtrojan(username, exp, quota, limitip, serverId) {
 
       const domain = server.domain;
       const auth = server.auth;
-      const param = `:5888/createtrojan?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
+      const param = `:5888/trialtrojan?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
       const url = `http://${domain}${param}`;
       axios.get(url)
         .then(response => {
@@ -305,7 +305,7 @@ async function trialshadowsocks(username, exp, quota, limitip, serverId) {
 
       const domain = server.domain;
       const auth = server.auth;
-      const param = `:5888/createshadowsocks?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
+      const param = `:5888/trialshadowsocks?user=${username}&exp=${exp}&quota=${quota}&iplimit=${limitip}&auth=${auth}`;
       const url = `http://${domain}${param}`;
       axios.get(url)
         .then(response => {
@@ -716,7 +716,3 @@ ${shadowsocksData.ss_link_grpc}
 }
 
 module.exports = { trialssh, trialvmess, trialvless, trialtrojan, trialshadowsocks, createssh, createvmess, createvless, createtrojan, createshadowsocks }; 
-
-
-
-
