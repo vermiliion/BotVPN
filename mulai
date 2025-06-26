@@ -102,29 +102,41 @@ server_app() {
 }
 EOF
 
-    # systemd service
+    # Deteksi lokasi node secara otomatis
+    NODE_PATH=$(which node)
+    if [ -z "$NODE_PATH" ]; then
+        echo -e "${red}Node.js tidak ditemukan. Pastikan Node.js sudah terinstall.${neutral}"
+        exit 1
+    fi
+    echo -e "${green}Node.js ditemukan di: $NODE_PATH${neutral}"
+
+    # Buat file autorun menggunakan path node absolut
+    cat >/usr/bin/sellvpn <<EOF
+#!/bin/bash
+cd /root/BotVPN || exit 1
+$NODE_PATH app-x.js
+EOF
+    chmod +x /usr/bin/sellvpn
+
+    # Buat systemd service file dengan ExecStart menggunakan path node absolut
     cat >/etc/systemd/system/sellvpn.service <<EOF
 [Unit]
 Description=App Bot sellvpn Service
 After=network.target
 
 [Service]
-ExecStart=/bin/bash /usr/bin/sellvpn
+ExecStart=$NODE_PATH /root/BotVPN/app-x.js
 Restart=always
 User=root
 Environment=PATH=/usr/bin:/usr/local/bin
 Environment=NODE_ENV=production
 WorkingDirectory=/root/BotVPN
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
 EOF
-
-    # File autorun
-    echo '#!/bin/bash' >/usr/bin/sellvpn
-    echo "cd /root/BotVPN" >>/usr/bin/sellvpn
-    echo "node app-x.js" >>/usr/bin/sellvpn
-    chmod +x /usr/bin/sellvpn
 
     systemctl daemon-reload
     systemctl enable sellvpn
