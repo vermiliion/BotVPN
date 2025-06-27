@@ -689,14 +689,12 @@ async function handleServiceAction(ctx, action) {
   let keyboard;
   if (action === 'create') {
     keyboard = [
-      [{ text: '✨ SSH', callback_data: 'create_ssh' }],
       [{ text: '✨ Vmess', callback_data: 'create_vmess' }, { text: '✨ Vless', callback_data: 'create_vless' }],
       [{ text: '✨ Trojan', callback_data: 'create_trojan' }, { text: '✨  Shadowsocks', callback_data: 'create_shadowsocks' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   } else if (action === 'renew') {
     keyboard = [
-      [{ text: '🌀Renew SSH', callback_data: 'renew_ssh' }],
       [{ text: '🌀Renew Vmess', callback_data: 'renew_vmess' }, { text: '🌀Renew Vless', callback_data: 'renew_vless' }],
       [{ text: '🌀Renew Trojan', callback_data: 'renew_trojan' }, { text: '🌀Renew Shadowsocks', callback_data: 'renew_shadowsocks' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
@@ -829,13 +827,6 @@ bot.action('create_shadowsocks', async (ctx) => {
   await startSelectServer(ctx, 'create', 'shadowsocks');
 });
 
-bot.action('create_ssh', async (ctx) => {
-  if (!ctx || !ctx.match) {
-    return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi nanti.', { parse_mode: 'Markdown' });
-  }
-  await startSelectServer(ctx, 'create', 'ssh');
-});
-
 bot.action('renew_vmess', async (ctx) => {
   if (!ctx || !ctx.match) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi nanti.', { parse_mode: 'Markdown' });
@@ -862,13 +853,6 @@ bot.action('renew_shadowsocks', async (ctx) => {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'renew', 'shadowsocks');
-});
-
-bot.action('renew_ssh', async (ctx) => {
-  if (!ctx || !ctx.match) {
-    return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi nanti.', { parse_mode: 'Markdown' });
-  }
-  await startSelectServer(ctx, 'renew', 'ssh');
 });
 async function startSelectServer(ctx, action, type, page = 0) {
   try {
@@ -965,7 +949,7 @@ bot.action(/navigate_(\w+)_(\w+)_(\d+)/, async (ctx) => {
   const [, action, type, page] = ctx.match;
   await startSelectServer(ctx, action, type, parseInt(page, 10));
 });
-bot.action(/^(create|renew|trial)_username_(vmess|vless|trojan|shadowsocks|ssh)_(.+)$/, async (ctx) => {
+bot.action(/^(create|renew|trial)_username_(vmess|vless|trojan|shadowsocks)_(.+)$/, async (ctx) => {
   await ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
 
   const match = ctx.match || [];
@@ -1054,9 +1038,6 @@ async function handleTrial(ctx, type, serverId) {
         break;
       case 'shadowsocks':
         msg = await trialshadowsocks(username, exp, quota, iplimit, serverId);
-        break;
-      case 'ssh':
-        msg = await trialssh(username, password, exp, iplimit, serverId);
         break;
       default:
         msg = '❌ *Tipe layanan tidak dikenali.*';
