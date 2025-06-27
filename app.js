@@ -1,7 +1,7 @@
 const os = require('os');
 const sqlite3 = require('sqlite3').verbose();
 const express = require('express');
-const { Telegraf } = require('telegraf');
+const { Telegraf, session } = require('telegraf');
 const app = express();
 const axios = require('axios');
 const QRISPayment = require('qris-payment');
@@ -67,6 +67,9 @@ const MERCHANT_ID = vars.MERCHANT_ID;
 const API_KEY = vars.API_KEY;
 
 const bot = new Telegraf(BOT_TOKEN);
+
+bot.use(session());
+
 const adminIds = ADMIN;
 logger.info('Bot initialized');
 
@@ -318,39 +321,71 @@ Gunakan perintah ini dengan format yang benar untuk menghindari kesalahan.
 });
 
 bot.command('broadcast', async (ctx) => {
-  const userId = ctx.message.from.id;
-  logger.info(`Broadcast command received from user_id: ${userId}`);
+  const userId = ctx.from.id;
+
   if (!adminIds.includes(userId)) {
-      logger.info(`⚠️ User ${userId} tidak memiliki izin untuk menggunakan perintah ini.`);
-      return ctx.reply('⚠️ Anda tidak memiliki izin untuk menggunakan perintah ini.', { parse_mode: 'Markdown' });
+    return ctx.reply('❌ Anda bukan admin dan tidak bisa menggunakan perintah ini.');
   }
 
-  const message = ctx.message.reply_to_message ? ctx.message.reply_to_message.text : ctx.message.text.split(' ').slice(1).join(' ');
-  if (!message) {
-      logger.info('⚠️ Pesan untuk disiarkan tidak diberikan.');
-      return ctx.reply('⚠️ Mohon berikan pesan untuk disiarkan.', { parse_mode: 'Markdown' });
+  if (!ctx.session) ctx.session = {};
+  ctx.session.isBroadcasting = true;
+
+  await ctx.reply('📝 *Mode Broadcast Aktif.*\nSilakan kirim pesan (teks, gambar, video, dokumen) yang ingin disiarkan ke semua pengguna.\n\nUntuk membatalkan, gunakan /cancel', { parse_mode: 'Markdown' });
+});
+
+bot.command('cancel', async (ctx) => {
+  const userId = ctx.from.id;
+
+  if (!adminIds.includes(userId)) {
+    return ctx.reply('❌ Anda bukan admin dan tidak diizinkan menggunakan perintah ini.');
   }
 
-  db.all("SELECT user_id FROM users", [], (err, rows) => {
+  if (ctx.session && ctx.session.isBroadcasting) {
+    ctx.session.isBroadcasting = false;
+    return ctx.reply('✅ Mode broadcast dibatalkan.');
+  }
+
+  ctx.reply('ℹ️ Tidak ada mode broadcast yang sedang aktif.');
+});
+
+bot.on('message', async (ctx) => {
+  const userId = ctx.from.id;
+
+  if (ctx.session && ctx.session.isBroadcasting && adminIds.includes(userId)) {
+    const msg = ctx.message;
+    const messageId = msg.message_id;
+    const fromChatId = msg.chat.id;
+
+    db.all("SELECT user_id FROM users", [], async (err, rows) => {
       if (err) {
-          logger.error('⚠️ Kesalahan saat mengambil daftar pengguna:', err.message);
-          return ctx.reply('⚠️ Kesalahan saat mengambil daftar pengguna.', { parse_mode: 'Markdown' });
+        console.error('DB Error saat ambil daftar pengguna untuk broadcast:', err);
+        return ctx.reply('⚠️ Gagal mengambil daftar pengguna.');
       }
 
-      rows.forEach((row) => {
-          const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-          axios.post(telegramUrl, {
-              chat_id: row.user_id,
-              text: message
-          }).then(() => {
-              logger.info(`✅ Pesan siaran berhasil dikirim ke ${row.user_id}`);
-          }).catch((error) => {
-              logger.error(`⚠️ Kesalahan saat mengirim pesan siaran ke ${row.user_id}`, error.message);
-          });
-      });
+      let sentCount = 0;
+      let failedCount = 0;
 
-      ctx.reply('✅ Pesan siaran berhasil dikirim.', { parse_mode: 'Markdown' });
-  });
+      for (const row of rows) {
+        if (row.user_id === userId) {
+          sentCount++;
+          continue;
+        }
+
+        try {
+          await bot.telegram.copyMessage(row.user_id, fromChatId, messageId);
+          sentCount++;
+        } catch (error) {
+          failedCount++;
+          console.error(`❌ Gagal kirim ke ${row.user_id}:`, error.message);
+          
+        }
+      }
+
+      await ctx.reply(`✅ Broadcast selesai!\nBerhasil: *${sentCount}* user\nGagal: *${failedCount}*`, { parse_mode: 'Markdown' });
+    });
+
+    ctx.session.isBroadcasting = false;
+  }
 });
 bot.command('addsaldo', async (ctx) => {
   const userId = ctx.message.from.id;
