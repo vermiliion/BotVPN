@@ -1,4 +1,6 @@
-## Fitur
+## Kalau Suka, Jangan Lupa Donate ya Buat Mimin Beli Kopi hehe😖😵‍💫
+
+<img src="https://github.com/vermiliion/BotVPN/blob/main/lite.jpeg?raw=true" width="300"/>
 
 - **Service Create**: Membuat akun VPN baru
 - **Service Renew**: Memperbarui akun VPN yang sudah ada
