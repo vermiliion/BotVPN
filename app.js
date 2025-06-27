@@ -1193,7 +1193,24 @@ bot.on('text', async (ctx) => {
             } else if (type === 'ssh') {
               msg = await createssh(username, password, exp, iplimit, serverId);
             }
-          } else if (action === 'renew') {
+            // Tambahkan ini untuk blok 'create' agar juga mengurangi saldo dan update total_create_akun
+            if (!msg || msg.toLowerCase().includes('gagal') || msg.toLowerCase().includes('error')) {
+              return ctx.reply('❌ *Pembuatan akun gagal. Saldo tidak dipotong.*', { parse_mode: 'Markdown' });
+            }
+
+            db.run('UPDATE users SET saldo = saldo - ? WHERE user_id = ?', [totalHarga, ctx.from.id], (err) => {
+              if (err) {
+                logger.error('⚠️ Kesalahan saat mengurangi saldo pengguna:', err.message);
+                return ctx.reply('❌ *Terjadi kesalahan saat mengurangi saldo pengguna.*', { parse_mode: 'Markdown' });
+              }
+            });
+            db.run('UPDATE Server SET total_create_akun = total_create_akun + 1 WHERE id = ?', [serverId], (err) => {
+              if (err) {
+                logger.error('⚠️ Kesalahan saat menambahkan total_create_akun:', err.message);
+                return ctx.reply('❌ *Terjadi kesalahan saat menambahkan total_create_akun.*', { parse_mode: 'Markdown' });
+              }
+            }); // Ini penutup callback db.run kedua
+           } else if (action === 'renew') {
             if (type === 'vmess') {
               msg = await renewvmess(username, exp, quota, iplimit, serverId);
             } else if (type === 'vless') {
@@ -1205,25 +1222,30 @@ bot.on('text', async (ctx) => {
             } else if (type === 'ssh') {
               msg = await renewssh(username, exp, iplimit, serverId);
             }
-          }
-          db.run('UPDATE users SET saldo = saldo - ? WHERE user_id = ?', [totalHarga, ctx.from.id], (err) => {
-            if (err) {
-              logger.error('⚠️ Kesalahan saat mengurangi saldo pengguna:', err.message);
-              return ctx.reply('❌ *Terjadi kesalahan saat mengurangi saldo pengguna.*', { parse_mode: 'Markdown' });
+
+            if (!msg || msg.toLowerCase().includes('gagal') || msg.toLowerCase().includes('error')) {
+              return ctx.reply('❌ *Renew gagal. Saldo tidak dipotong.*', { parse_mode: 'Markdown' });
             }
-          });
-          db.run('UPDATE Server SET total_create_akun = total_create_akun + 1 WHERE id = ?', [serverId], (err) => {
-            if (err) {
-              logger.error('⚠️ Kesalahan saat menambahkan total_create_akun:', err.message);
-              return ctx.reply('❌ *Terjadi kesalahan saat menambahkan total_create_akun.*', { parse_mode: 'Markdown' });
-            }
-          });
+
+            db.run('UPDATE users SET saldo = saldo - ? WHERE user_id = ?', [totalHarga, ctx.from.id], (err) => {
+              if (err) {
+                logger.error('⚠️ Kesalahan saat mengurangi saldo pengguna:', err.message);
+                return ctx.reply('❌ *Terjadi kesalahan saat mengurangi saldo pengguna.*', { parse_mode: 'Markdown' });
+              }
+            });
+            db.run('UPDATE Server SET total_create_akun = total_create_akun + 1 WHERE id = ?', [serverId], (err) => {
+              if (err) {
+                logger.error('⚠️ Kesalahan saat menambahkan total_create_akun:', err.message);
+                return ctx.reply('❌ *Terjadi kesalahan saat menambahkan total_create_akun.*', { parse_mode: 'Markdown' });
+              }
+            }); // Ini penutup callback db.run kedua
+          } // Ini penutup dari if (action === 'create') atau else if (action === 'renew')
 
           await ctx.reply(msg, { parse_mode: 'Markdown' });
           delete userState[ctx.chat.id];
-        });
-      });
-    });
+        }); // Ini penutup dari db.get('SELECT saldo ...')
+      }); // Ini penutup dari db.get('SELECT harga ...')
+    }); // Ini penutup dari db.get('SELECT quota, iplimit ...')
   } else if (state.step === 'addserver') {
     const domain = ctx.message.text.trim();
     if (!domain) {
