@@ -222,6 +222,9 @@ async function sendMainMenu(ctx) {
   } catch (err) {
     logger.error('Kesalahan saat mengambil data:', err.message);
   }
+function escapeMarkdownV2(text) {
+  return text.replace(/[_*[\]()~`>#+=|{}.!\\-]/g, '\\$&');
+}
 const userId = ctx.from.id;
 const username = ctx.from.username
   ? escapeMarkdown('@' + ctx.from.username)
@@ -1029,8 +1032,16 @@ bot.action(/^(create|renew|trial)_username_(vmess|vless|trojan|shadowsocks|ssh)_
   }
 });
 
+// Helper untuk kirim pesan lalu auto-delete
+async function replyAutoDelete(ctx, text, delay = 1000, options = {}) {
+  const sent = await ctx.reply(text, options);
+  setTimeout(() => {
+    ctx.deleteMessage(sent.message_id).catch(() => {});
+  }, delay);
+}
+
+// Fungsi handleTrial untuk semua tipe layanan trial
 async function handleTrial(ctx, type, serverId) {
-  let msg;
   try {
     const username = `trial${Math.floor(Math.random() * 10000)}`;
     const password = Math.random().toString(36).slice(-6);
@@ -1038,22 +1049,29 @@ async function handleTrial(ctx, type, serverId) {
     const quota = 1;
     const iplimit = 1;
 
-    if (type === 'vmess') {
-      msg = await trialvmess(username, exp, quota, iplimit, serverId);
-    } else if (type === 'vless') {
-      msg = await trialvless(username, exp, quota, iplimit, serverId);
-    } else if (type === 'trojan') {
-      msg = await trialtrojan(username, exp, quota, iplimit, serverId);
-    } else if (type === 'shadowsocks') {
-      msg = await trialshadowsocks(username, exp, quota, iplimit, serverId);
-    } else {
-      msg = '❌ *Tipe layanan tidak dikenali.*';
+    let msg;
+    switch (type) {
+      case 'vmess':
+        msg = await trialvmess(username, exp, quota, iplimit, serverId);
+        break;
+      case 'vless':
+        msg = await trialvless(username, exp, quota, iplimit, serverId);
+        break;
+      case 'trojan':
+        msg = await trialtrojan(username, exp, quota, iplimit, serverId);
+        break;
+      case 'shadowsocks':
+        msg = await trialshadowsocks(username, exp, quota, iplimit, serverId);
+        break;
+      default:
+        msg = '❌ *Tipe layanan tidak dikenali.*';
     }
 
-    await ctx.reply(msg, { parse_mode: 'Markdown' });
+    await replyAutoDelete(ctx, msg, 1000, { parse_mode: 'Markdown' });
+  
   } catch (error) {
     logger.error(`❌ Error trial ${type}:`, error);
-    await ctx.reply('❌ *Gagal membuat akun trial. Silakan coba lagi nanti.*', { parse_mode: 'Markdown' });
+    await replyAutoDelete(ctx, '❌ *Gagal membuat akun trial. Silakan coba lagi nanti.*', 15000, { parse_mode: 'Markdown' });
   } finally {
     delete userState[ctx.chat.id];
   }
