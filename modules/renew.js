@@ -34,8 +34,8 @@ async function renewssh(username, exp, limitip, serverId) {
 ────────────────────
 ┌───────────────────
 │ Username: \`${username}\`
-│ Kadaluarsa: \`${sshData.exp}\`
-│ Batas IP: \`${sshData.limitip} IP\`
+│ Kadaluarsa: \`${sshData.expired}\`
+│ Batas IP: \`${sshData.ip_limit}\`
 └───────────────────
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
@@ -87,9 +87,9 @@ async function renewvmess(username, exp, quota, limitip, serverId) {
 ─────────────────────
 ┌────────────────────
 │ Username: \`${username}\`
-│ Kadaluarsa: \`${vmessData.exp}\`
-│ Kuota: \`${vmessData.quota}\`
-│ Batas IP: \`${vmessData.limitip} IP\`
+│ Kadaluarsa: \`${vmessData.expired}\`
+│ Kuota: \`${vmessData.quota === '0 GB' ? 'Unlimited' : vlessData.quota}\`
+│ Batas IP: \`${vmessData.ip_limit === '0' ? 'Unlimited' : vlessData.ip_limit} IP\`
 └────────────────────
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
@@ -140,9 +140,9 @@ async function renewvmess(username, exp, quota, limitip, serverId) {
 ─────────────────────
 ┌────────────────────
 │ Username: \`${username}\`
-│ Kadaluarsa: \`${vlessData.exp}\`
-│ Kuota: \`${vlessData.quota}\`
-│ Batas IP: \`${vlessData.limitip} IP\`
+│ Kadaluarsa: \`${vlessData.expired}\`
+│ Kuota: \`${vlessData.quota === '0 GB' ? 'Unlimited' : vlessData.quota}\`
+│ Batas IP: \`${vlessData.ip_limit === '0' ? 'Unlimited' : vlessData.ip_limit} IP\`
 └────────────────────
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
@@ -194,9 +194,9 @@ async function renewvmess(username, exp, quota, limitip, serverId) {
 ─────────────────────
 ┌────────────────────
 │ Username: \`${username}\`
-│ Kadaluarsa: \`${trojanData.exp}\`
-│ Kuota: \`${trojanData.quota}\`
-│ Batas IP: \`${trojanData.limitip} IP\`
+│ Kadaluarsa: \`${trojanData.expired}\`
+│ Kuota: \`${trojanData.quota === '0 GB' ? 'Unlimited' : trojanData.quota}\`
+│ Batas IP: \`${trojanData.ip_limit === '0' ? 'Unlimited' : trojanData.ip_limit} IP\`
 └────────────────────
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
@@ -248,9 +248,9 @@ async function renewvmess(username, exp, quota, limitip, serverId) {
 ─────────────────────
 ┌────────────────────
 │ Username: \`${username}\`
-│ Kadaluarsa: \`${shadowsocksData.exp}\`
-│ Kuota: \`${shadowsocksData.quota}\`
-│ Batas IP: \`${shadowsocksData.limitip} IP\`
+│ Kadaluarsa: \`${shadowsocksData.expired}\`
+│ Kuota: \`${shadowsocksData.quota === '0 GB' ? 'Unlimited' : shadowsocksData.quota}\`
+│ Batas IP: \`${shadowsocksData.ip_limit === '0' ? 'Unlimited' : shadowsocksData.ip_limit} IP\`
 └────────────────────
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
