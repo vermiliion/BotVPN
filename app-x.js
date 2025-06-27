@@ -176,7 +176,7 @@ async function sendMainMenu(ctx) {
       { text: '♻️ Perpanjang Akun', callback_data: 'service_renew' }
     ],
     [
-      { text: '🌟 Trial Akun', callback_data: 'service_trial' }, // <-- Tambahkan baris ini
+      { text: '🌟 Trial Akun', callback_data: 'service_trial' },
       { text: '💰 TopUp Saldo', callback_data: 'topup_saldo' }
     ],
     [
@@ -993,8 +993,8 @@ bot.action(/^(create|renew|trial)_username_(vmess|vless|trojan|shadowsocks|ssh)_
 
       const trialCount = row?.count || 0;
 
-      if (trialCount >= 1) {
-        return ctx.reply('⚠️ *Kamu sudah trial hari ini, Gass Orderr 🗿🥵😵‍💫', { parse_mode: 'Markdown' });
+      if (trialCount >= 2) {
+        return ctx.reply('⚠️ *Kamu sudah trial hari ini, Gass Order* 😖', { parse_mode: 'Markdown' });
       }
 
       await handleTrial(ctx, type, serverId);
@@ -1032,14 +1032,6 @@ bot.action(/^(create|renew|trial)_username_(vmess|vless|trojan|shadowsocks|ssh)_
   }
 });
 
-// Helper untuk kirim pesan lalu auto-delete
-async function replyAutoDelete(ctx, text, delay = 1000, options = {}) {
-  const sent = await ctx.reply(text, options);
-  setTimeout(() => {
-    ctx.deleteMessage(sent.message_id).catch(() => {});
-  }, delay);
-}
-
 // Fungsi handleTrial untuk semua tipe layanan trial
 async function handleTrial(ctx, type, serverId) {
   try {
@@ -1063,15 +1055,21 @@ async function handleTrial(ctx, type, serverId) {
       case 'shadowsocks':
         msg = await trialshadowsocks(username, exp, quota, iplimit, serverId);
         break;
+      case 'ssh':
+        msg = await trialssh(username, password, exp, iplimit, serverId);
+        break;
       default:
         msg = '❌ *Tipe layanan tidak dikenali.*';
     }
 
-    await replyAutoDelete(ctx, msg, 1000, { parse_mode: 'Markdown' });
-  
+    // Kirim hasil trial jika ada
+    if (msg) {
+      await ctx.reply(msg, { parse_mode: 'Markdown' });
+    }
+
   } catch (error) {
     logger.error(`❌ Error trial ${type}:`, error);
-    await replyAutoDelete(ctx, '❌ *Gagal membuat akun trial. Silakan coba lagi nanti.*', 15000, { parse_mode: 'Markdown' });
+    await ctx.reply('❌ *Gagal membuat akun trial. Silakan coba lagi nanti.*', { parse_mode: 'Markdown' });
   } finally {
     delete userState[ctx.chat.id];
   }
