@@ -2733,7 +2733,7 @@ function keyboard_abc() {
 }
 
 function keyboard_nomor() {
-  const alphabet = '0123456789';
+  const alphabet = '1234567890';
   const buttons = [];
   for (let i = 0; i < alphabet.length; i += 3) {
     const row = alphabet.slice(i, i + 3).split('').map(char => ({
