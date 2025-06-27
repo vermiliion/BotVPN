@@ -222,7 +222,7 @@ async function sendMainMenu(ctx) {
   } catch (err) {
     logger.error('Kesalahan saat mengambil data:', err.message);
   }
-function escapeMarkdownV2(text) {
+function escapeMarkdown(text) {
   return text.replace(/[_*[\]()~`>#+=|{}.!\\-]/g, '\\$&');
 }
 const userId = ctx.from.id;
