@@ -2099,31 +2099,50 @@ bot.action('nama_server_edit', async (ctx) => {
 });
 
 bot.action('topup_saldo', async (ctx) => {
+  const userId = ctx.from.id;
+  const chatId = ctx.chat.id;
+
   try {
     await ctx.answerCbQuery(); 
-    const userId = ctx.from.id;
     logger.info(`🔍 User ${userId} memulai proses top-up saldo.`);
-    
 
-    if (!global.depositState) {
-      global.depositState = {};
+    if (lastMenus[userId]) {
+      try {
+        await bot.telegram.deleteMessage(chatId, lastMenus[userId]);
+        logger.info(`🧹 Menu lama milik ${userId} berhasil dihapus`);
+        delete lastMenus[userId];
+      } catch (e) {
+        console.warn(`⚠️ Gagal menghapus menu sebelumnya untuk ${userId}:`, e.message);
+      }
     }
+
+    if (!global.depositState) global.depositState = {};
     global.depositState[userId] = { action: 'request_amount', amount: '' };
-    
-    logger.info(`🔍 User ${userId} diminta untuk memasukkan jumlah nominal saldo.`);
-    
 
     const keyboard = keyboard_nomor();
-    
-    await ctx.editMessageText('💰 *Silahkan masukkan jumlah nominal saldo yang Anda ingin tambahkan ke akun Anda:*', {
-      reply_markup: {
-        inline_keyboard: keyboard
-      },
-      parse_mode: 'Markdown'
-    });
+
+    const sent = await ctx.reply(
+      '💰 *Silahkan masukkan jumlah nominal saldo yang Anda ingin tambahkan ke akun Anda:*',
+      {
+        reply_markup: { inline_keyboard: keyboard },
+        parse_mode: 'Markdown'
+      }
+    );
+
+    if (sent && sent.message_id) {
+      lastMenus[userId] = sent.message_id;
+    }
+
   } catch (error) {
     logger.error('❌ Kesalahan saat memulai proses top-up saldo:', error);
-    await ctx.editMessageText('❌ *GAGAL! Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.*', { parse_mode: 'Markdown' });
+    try {
+      await ctx.reply(
+        '❌ *GAGAL! Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.*',
+        { parse_mode: 'Markdown' }
+      );
+    } catch (e) {
+      logger.error('Gagal kirim pesan error:', e.message);
+    }
   }
 });
 
@@ -2323,10 +2342,19 @@ async function handleDepositState(ctx, userId, data) {
     if (currentAmount.length === 0) {
       return await ctx.answerCbQuery('⚠️ Jumlah tidak boleh kosong!', { show_alert: true });
     }
+
     if (parseInt(currentAmount) < 1000) {
-      return await ctx.answerCbQuery('⚠️ Jumlah minimal top-up adalah  1000 Ya Kak...!!!', { show_alert: true });
+      return await ctx.answerCbQuery('⚠️ Jumlah minimal top-up adalah 1000 Ya Kak...!!!', { show_alert: true });
     }
+
     global.depositState[userId].action = 'confirm_amount';
+
+    try {
+      await ctx.deleteMessage();
+    } catch (e) {
+      logger.warn(`⚠️ Gagal menghapus pesan top-up konfirmasi: ${e.message}`);
+    }
+
     await processDeposit(ctx, currentAmount);
     return;
   } else {
@@ -2338,8 +2366,9 @@ async function handleDepositState(ctx, userId, data) {
   }
 
   global.depositState[userId].amount = currentAmount;
-  const newMessage = `💰 *Silahkan masukkan jumlah nominal saldo yang Anda ingin tambahkan ke akun Anda:*\n\nJumlah saat ini: *Rp ${currentAmount}*`;
-  
+
+  const newMessage = `💰 *Masukkan Jumlah Nominal Topup Saldo Mu:*\n\nJumlah saat ini: *Rp ${currentAmount}*`;
+
   try {
     await ctx.editMessageText(newMessage, {
       reply_markup: { inline_keyboard: keyboard_nomor() },
@@ -2349,7 +2378,7 @@ async function handleDepositState(ctx, userId, data) {
     if (error.description && error.description.includes('message is not modified')) {
       return;
     }
-    logger.error('Error updating message:', error);
+    logger.error('❌ Gagal update pesan nominal top-up:', error);
   }
 }
 
