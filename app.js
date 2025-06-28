@@ -335,40 +335,57 @@ Gunakan perintah ini dengan format yang benar untuk menghindari kesalahan.
 `;
   ctx.reply(helpMessage, { parse_mode: 'Markdown' });
 });
-
 bot.command('broadcast', async (ctx) => {
   const userId = ctx.message.from.id;
-  logger.info(`Broadcast command received from user_id: ${userId}`);
+
   if (!adminIds.includes(userId)) {
-      logger.info(`⚠️ User ${userId} tidak memiliki izin untuk menggunakan perintah ini.`);
-      return ctx.reply('⚠️ Anda tidak memiliki izin untuk menggunakan perintah ini.', { parse_mode: 'Markdown' });
+    return ctx.reply('⚠️ Anda tidak memiliki izin untuk menggunakan perintah ini.', { parse_mode: 'Markdown' });
   }
 
-  const message = ctx.message.reply_to_message ? ctx.message.reply_to_message.text : ctx.message.text.split(' ').slice(1).join(' ');
-  if (!message) {
-      logger.info('⚠️ Pesan untuk disiarkan tidak diberikan.');
-      return ctx.reply('⚠️ Mohon berikan pesan untuk disiarkan.', { parse_mode: 'Markdown' });
+  const reply = ctx.message.reply_to_message;
+  const inputText = ctx.message.text.split(' ').slice(1).join(' ');
+
+  if (!reply && !inputText) {
+    return ctx.reply(
+      '📌 *Cara menggunakan perintah broadcast:*\n\n' +
+      '1. Balas pesan (teks/gambar/video/dokumen) lalu ketik /broadcast untuk menyiarkan media tersebut\n' +
+      '2. Atau langsung kirim `/broadcast Pesanmu` untuk broadcast teks biasa\n\n' +
+      'Contoh:\n`/broadcast Hallo semua!`',
+      { parse_mode: 'Markdown' }
+    );
   }
 
-  db.all("SELECT user_id FROM users", [], (err, rows) => {
-      if (err) {
-          logger.error('⚠️ Kesalahan saat mengambil daftar pengguna:', err.message);
-          return ctx.reply('⚠️ Kesalahan saat mengambil daftar pengguna.', { parse_mode: 'Markdown' });
+  db.all("SELECT user_id FROM users", [], async (err, rows) => {
+    if (err) {
+      console.error('DB Error:', err);
+      return ctx.reply('⚠️ Gagal mengambil daftar pengguna.');
+    }
+
+    let success = 0;
+    let failed = 0;
+
+    for (const row of rows) {
+      try {
+        if (reply) {
+
+          await bot.telegram.copyMessage(row.user_id, ctx.chat.id, reply.message_id);
+        } else if (inputText) {
+
+          await bot.telegram.sendMessage(row.user_id, inputText);
+        }
+
+        success++;
+      } catch (error) {
+        failed++;
+        console.error(`❌ Gagal kirim ke ${row.user_id}:`, error.message);
       }
 
-      rows.forEach((row) => {
-          const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-          axios.post(telegramUrl, {
-              chat_id: row.user_id,
-              text: message
-          }).then(() => {
-              logger.info(`✅ Pesan siaran berhasil dikirim ke ${row.user_id}`);
-          }).catch((error) => {
-              logger.error(`⚠️ Kesalahan saat mengirim pesan siaran ke ${row.user_id}`, error.message);
-          });
-      });
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
 
-      ctx.reply('✅ Pesan siaran berhasil dikirim.', { parse_mode: 'Markdown' });
+    await ctx.reply(`✅ Broadcast selesai!\nBerhasil: *${success}* user\nGagal: *${failed}*`, {
+      parse_mode: 'Markdown'
+    });
   });
 });
 bot.command('addsaldo', async (ctx) => {
