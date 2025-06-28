@@ -68,7 +68,6 @@ const API_KEY = vars.API_KEY;
 const bot = new Telegraf(BOT_TOKEN);
 const adminIds = ADMIN;
 logger.info('Bot initialized');
-
 const db = new sqlite3.Database('./sellvpn.db', (err) => {
   if (err) {
     logger.error('Kesalahan koneksi SQLite3:', err.message);
@@ -130,34 +129,59 @@ db.run(`
     UNIQUE(user_id, date)
 )
 `);
-
+const lastMenus = {}; 
 const userState = {};
 logger.info('User state initialized');
 
 bot.command(['start', 'menu'], async (ctx) => {
-  logger.info('Start or Menu command received');
-  
+  logger.info('📥 Perintah /start atau /menu diterima');
+
   const userId = ctx.from.id;
+  const chatId = ctx.chat.id;
+
+  // 1. Hapus pesan yang diketik user (/start atau /menu)
+  try {
+    await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
+    logger.info(`🧹 Pesan command user ${userId} berhasil dihapus`);
+  } catch (e) {
+    console.warn(`⚠️ Tidak bisa hapus pesan command user ${userId}:`, e.message);
+  }
+
+  // 2. Cek dan simpan user ke database jika belum ada
   db.get('SELECT * FROM users WHERE user_id = ?', [userId], (err, row) => {
     if (err) {
-      logger.error('Kesalahan saat memeriksa user_id:', err.message);
+      logger.error('❌ Kesalahan saat memeriksa user_id:', err.message);
       return;
     }
-
-    if (row) {
-      logger.info(`User ID ${userId} sudah ada di database`);
-    } else {
+    if (!row) {
       db.run('INSERT INTO users (user_id) VALUES (?)', [userId], (err) => {
         if (err) {
-          logger.error('Kesalahan saat menyimpan user_id:', err.message);
+          logger.error('❌ Gagal menyimpan user_id:', err.message);
         } else {
-          logger.info(`User ID ${userId} berhasil disimpan`);
+          logger.info(`✅ User ID ${userId} berhasil disimpan`);
         }
       });
+    } else {
+      logger.info(`ℹ️ User ID ${userId} sudah ada`);
     }
   });
 
-  await sendMainMenu(ctx);
+  // 3. Hapus menu lama jika ada
+  if (lastMenus[userId]) {
+    try {
+      await ctx.telegram.deleteMessage(chatId, lastMenus[userId]);
+      logger.info(`🧹 Menu lama milik ${userId} dihapus`);
+    } catch (e) {
+      console.warn(`⚠️ Gagal hapus menu lama user ${userId}:`, e.message);
+    }
+  }
+
+  // 4. Kirim menu baru
+  const sent = await sendMainMenu(ctx);
+  if (sent?.message_id) {
+    lastMenus[userId] = sent.message_id;
+    logger.info(`✅ Menu baru dikirim ke ${userId} dengan message_id ${sent.message_id}`);
+  }
 });
 
 bot.command('admin', async (ctx) => {
@@ -171,86 +195,65 @@ bot.command('admin', async (ctx) => {
   await sendAdminMenu(ctx);
 });
 async function sendMainMenu(ctx) {
-const keyboard = [
-  [ 
-    { text: '🌟 Trial Akun', callback_data: 'service_trial' }
-  ],
-  [ 
-    { text: '💠 Vmess', callback_data: 'create_vmess' },
-    { text: '💠 Vless', callback_data: 'create_vless' }
-  ],
-  [     
-    { text: '💠 Trojan', callback_data: 'create_trojan' },
-    { text: '💠 Shadowsocks', callback_data: 'create_shadowsocks' }
-  ],
-  [ 
-    { text: '♻️ Renew', callback_data: 'service_renew' }
-  ],
-  [
-    { text: '💳 TopUp Saldo', callback_data: 'topup_saldo' }
-  ]
-];
-const uptime = os.uptime();
-const days = Math.floor(uptime / (60 * 60 * 24));
-const hours = Math.floor((uptime % (60 * 60 * 24)) / (60 * 60));
-const minutes = Math.floor((uptime % (60 * 60)) / 60);
-const seconds = Math.floor(uptime % 60);
-const uptimeFormatted = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  const keyboard = [
+    [{ text: '🌟 Trial Akun', callback_data: 'service_trial' }],
+    [
+      { text: '💠 Vmess', callback_data: 'create_vmess' },
+      { text: '💠 Vless', callback_data: 'create_vless' }
+    ],
+    [
+      { text: '💠 Trojan', callback_data: 'create_trojan' },
+      { text: '💠 Shadowsocks', callback_data: 'create_shadowsocks' }
+    ],
+    [{ text: '♻️ Renew', callback_data: 'service_renew' }],
+    [{ text: '💳 TopUp Saldo', callback_data: 'topup_saldo' }]
+  ];
 
-// Ambil waktu dan tanggal
-const currentDate = new Date();
-const formattedDate = new Intl.DateTimeFormat('id-ID', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric'
-}).format(currentDate);
+  const uptime = os.uptime();
+  const days = Math.floor(uptime / 86400);
+  const hours = Math.floor((uptime % 86400) / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  const seconds = Math.floor(uptime % 60);
+  const uptimeFormatted = `${days}d ${hours}h ${minutes}m ${seconds}s`;
 
-const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-const currentDay = dayNames[currentDate.getDay()];
+  const now = new Date();
+  const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const currentDay = dayNames[now.getDay()];
+  const currentDate = new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(now);
+  const timeNow = now.toTimeString().split(' ')[0];
 
-const timeNow = currentDate.toTimeString().split(' ')[0];
-
-let jumlahServer = 0;
-let jumlahPengguna = 0;
-let saldo = 0;
-
-try {
-  // Hitung jumlah server
-  jumlahServer = await new Promise((resolve, reject) => {
-    db.get('SELECT COUNT(*) AS count FROM Server', (err, row) => {
-      if (err) reject(err);
-      else resolve(row ? row.count : 0);
-    });
-  });
-
-  // Hitung jumlah pengguna
-  jumlahPengguna = await new Promise((resolve, reject) => {
-    db.get('SELECT COUNT(*) AS count FROM users', (err, row) => {
-      if (err) reject(err);
-      else resolve(row ? row.count : 0);
-    });
-  });
-
-  // Dapatkan saldo pengguna
   const userId = ctx.from.id;
-  saldo = await new Promise((resolve, reject) => {
-    db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], (err, row) => {
-      if (err) {
-        logger.error('❌ Kesalahan saat memeriksa saldo:', err.message);
-        return reject('❌ *Terjadi kesalahan saat memeriksa saldo Anda. Silahkan coba lagi nanti.*');
-      }
-      resolve(row ? row.saldo : 0);
+  const username = ctx.from.username ? `@${ctx.from.username}` : 'Tidak tersedia';
+
+  let jumlahServer = 0, jumlahPengguna = 0, saldo = 0;
+
+  try {
+    jumlahServer = await new Promise((resolve, reject) => {
+      db.get('SELECT COUNT(*) AS count FROM Server', (err, row) => {
+        if (err) reject(err); else resolve(row.count);
+      });
     });
-  });
 
-} catch (err) {
-  logger.error('Kesalahan saat mengambil data:', err.message);
-}
+    jumlahPengguna = await new Promise((resolve, reject) => {
+      db.get('SELECT COUNT(*) AS count FROM users', (err, row) => {
+        if (err) reject(err); else resolve(row.count);
+      });
+    });
 
-const userId = ctx.from.id;
-const username = ctx.from.username ? `@${ctx.from.username}` : 'Tidak tersedia';
+    saldo = await new Promise((resolve, reject) => {
+      db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], (err, row) => {
+        if (err) reject(err); else resolve(row ? row.saldo : 0);
+      });
+    });
+  } catch (e) {
+    logger.error('Gagal ambil data:', e.message);
+  }
 
-const messageText = `
+  const messageText = `
 ━━━━━━━━━━━━━━━━━━━━━━
        🏷️ *≡ BOT PANEL VPN ≡* 🏷️
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -263,7 +266,7 @@ transaksi hanya lewat bot 🙂
 💳 *» Saldo kamu:* \`Rp.${saldo}\`
 ━━━━━━━━━━━━━━━━━━━━━━
 🕒 *» Jam:* \`${timeNow}\`
-📅 *» Hari:* \`${currentDay}, ${formattedDate}\`
+📅 *» Hari:* \`${currentDay}, ${currentDate}\`
 🤖 *» Bot Aktif:* \`${uptimeFormatted}\`
 🏆 *» Username:* \`${username}\`
 🆔 *» ID Pengguna:* \`${userId}\`
@@ -271,28 +274,17 @@ transaksi hanya lewat bot 🙂
 🌐 *» Server Aktif:* \`${jumlahServer}\`
 👥 *» Total User:* \`${jumlahPengguna}\`
 ━━━━━━━━━━━━━━━━━━━━━━`;
+
   try {
-    if (ctx.updateType === 'callback_query') {
-      await ctx.editMessageText(messageText, {
-        parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: keyboard
-        }
-      });
-    } else {
-      await ctx.reply(messageText, {
-        parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: keyboard
-        }
-      });
-    }
-    logger.info('Main menu sent');
-  } catch (error) {
-    logger.error('Error saat mengirim menu utama:', error);
+    const sent = await ctx.reply(messageText, {
+      parse_mode: 'Markdown',
+      reply_markup: { inline_keyboard: keyboard }
+    });
+    return sent;
+  } catch (err) {
+    logger.error('Gagal kirim menu utama:', err.message);
   }
 }
-
 bot.command('hapuslog', async (ctx) => {
   if (!adminIds.includes(ctx.from.id)) return ctx.reply('Tidak ada izin!');
   try {
@@ -820,12 +812,30 @@ bot.action('service_renew', async (ctx) => {
 });
 
 bot.action('send_main_menu', async (ctx) => {
-  if (!ctx || !ctx.match) {
-    return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
-  }
-  await sendMainMenu(ctx);
-});
+  const userId = ctx.from.id;
+  const chatId = ctx.chat.id;
 
+  try {
+    await ctx.answerCbQuery();
+
+    if (lastMenus[userId]) {
+      try {
+        await ctx.telegram.deleteMessage(chatId, lastMenus[userId]);
+      } catch (e) {
+        console.warn(`⚠️ Gagal hapus menu lama dari ${userId}:`, e.message);
+      }
+    }
+
+    const sent = await sendMainMenu(ctx);
+    if (sent?.message_id) {
+      lastMenus[userId] = sent.message_id;
+    }
+
+  } catch (error) {
+    logger.error('❌ Gagal handle send_main_menu:', error.message);
+    await ctx.reply('❌ *Gagal memproses menu utama.*', { parse_mode: 'Markdown' });
+  }
+});
 bot.action('create_vmess', async (ctx) => {
   if (!ctx || !ctx.match) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
