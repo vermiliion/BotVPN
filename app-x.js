@@ -2430,7 +2430,7 @@ async function handleEditTotalCreateAkun(ctx, userStateData, data) {
 }
 
 async function handleEditiplimit(ctx, userStateData, data) {
-  await handleEditField(ctx, userStateData, data, 'iplimit', 'limit IP', 'UPDATE Server SET limit_ip = ? WHERE id = ?');
+  await handleEditField(ctx, userStateData, data, 'iplimit', 'limit IP', 'UPDATE Server SET iplimit = ? WHERE id = ?');
 }
 
 async function handleEditQuota(ctx, userStateData, data) {
