@@ -98,6 +98,7 @@ const db = new sqlite3.Database('./sellvpn.db', (err) => {
                 else logger.info('✅ Default bonus_config dijamin ada');
             });
 
+            
             db.run(`
                 CREATE TABLE IF NOT EXISTS bonus_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -112,23 +113,46 @@ const db = new sqlite3.Database('./sellvpn.db', (err) => {
                 else logger.info('✅ Tabel bonus_log siap');
             });
 
-            db.run(`CREATE TABLE IF NOT EXISTS pending_deposits (
-                unique_code TEXT PRIMARY KEY,
-                user_id INTEGER,
-                username TEXT,
-                amount INTEGER,
-                original_amount INTEGER,
-                timestamp INTEGER,
-                status TEXT,
-                qr_message_id INTEGER
-            )`, (err) => {
+            db.run(`
+                CREATE TABLE IF NOT EXISTS pending_deposits (
+                    unique_code TEXT PRIMARY KEY,
+                    user_id INTEGER,
+                    username TEXT,
+                    amount INTEGER,
+                    original_amount INTEGER,
+                    timestamp INTEGER,
+                    status TEXT,
+                    qr_message_id INTEGER
+                )
+            `, (err) => {
                 if (err) {
-                    logger.error('Kesalahan membuat tabel pending_deposits:', err.message);
+                    logger.error('❌ Gagal membuat tabel pending_deposits:', err.message);
                 } else {
                     logger.info('✅ Tabel pending_deposits siap');
                 }
             });
-        }); 
+
+            db.run(`
+                CREATE TABLE IF NOT EXISTS log_penjualan (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    username TEXT,
+                    nama_server TEXT,
+                    tipe_akun TEXT,
+                    harga INTEGER,
+                    masa_aktif_hari INTEGER,
+                    waktu_transaksi TEXT,
+                    action_type TEXT
+                )
+            `, (err) => {
+                if (err) {
+                    logger.error('❌ Gagal membuat tabel log_penjualan:', err.message);
+                } else {
+                    logger.info('✅ Tabel log_penjualan siap');
+                }
+            });
+
+        });
     }
 });
 
@@ -409,6 +433,33 @@ bot.command('broadcast', async (ctx) => {
       parse_mode: 'Markdown'
     });
   });
+});
+bot.action('statistik_penjualan', async (ctx) => {
+    await ctx.answerCbQuery();
+
+    db.all(`
+        SELECT tipe_akun, COUNT(*) as jumlah, SUM(harga) as total_harga 
+        FROM log_penjualan 
+        GROUP BY tipe_akun
+    `, [], (err, rows) => {
+        if (err || rows.length === 0) {
+            return ctx.reply('⚠️ Belum ada data penjualan.');
+        }
+
+        let totalAkun = 0;
+        let totalUang = 0;
+        const hasil = rows.map(r => {
+            totalAkun += r.jumlah;
+            totalUang += r.total_harga;
+            return `📦 *${r.tipe_akun.toUpperCase()}*\nJumlah Terjual: ${r.jumlah}\nTotal: Rp${r.total_harga}`;
+        }).join('\n\n');
+
+        ctx.reply(
+            `📊 *Statistik Penjualan per Tipe Akun:*\n\n${hasil}\n\n` +
+            `🧾 *Total Semua Akun Terjual:* ${totalAkun}\n💰 *Total Uang Masuk:* Rp${totalUang}`,
+            { parse_mode: 'Markdown' }
+        );
+    });
 });
 bot.command('addsaldo', async (ctx) => {
   const userId = ctx.message.from.id;
@@ -770,6 +821,7 @@ async function sendAdminMenu(ctx) {
         [{ text: '💵 Tambah Saldo', callback_data: 'addsaldo_user' }, { text: '📋 List Server', callback_data: 'listserver' }],
         [{ text: '♻️ Reset Server', callback_data: 'resetdb' }, { text: 'ℹ️ Detail Server', callback_data: 'detailserver' }],
         [{ text: '🎁 Set Bonus TopUp', callback_data: 'bonus_topup_setting' }, { text: '📜 Log Bonus TopUp', callback_data: 'log_bonus_topup' }],
+        [{ text: '📈 Statistik Penjualan', callback_data: 'statistik_penjualan' }],
         [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
 
@@ -1284,19 +1336,45 @@ bot.on('text', async (ctx) => {
                 }
 
                 db.run('UPDATE users SET saldo = saldo - ? WHERE user_id = ?', [totalHarga, userId], (err) => {
-                    if (err) {
-                        logger.error('⚠️ Kesalahan saat mengurangi saldo pengguna:', err.message);
-
-                    }
-                });
+                        if (err) {
+                            logger.error('⚠️ Kesalahan saat mengurangi saldo pengguna:', err.message);
+                        }
+                    });
+                    
                 db.run('UPDATE Server SET total_create_akun = total_create_akun + 1 WHERE id = ?', [state.serverId], (err) => {
-                    if (err) {
-                        logger.error('⚠️ Kesalahan saat menambahkan total_create_akun:', err.message);
-                    }
-                });
+                        if (err) {
+                            logger.error('⚠️ Kesalahan saat menambahkan total_create_akun:', err.message);
+                        }
+                    });
 
-                await ctx.reply(msg, { parse_mode: 'Markdown' });
-                delete userState[userId];
+                    db.run(`INSERT INTO log_penjualan (
+                                user_id,
+                                username,
+                                nama_server,
+                                tipe_akun,
+                                harga,
+                                masa_aktif_hari,
+                                waktu_transaksi,
+                                action_type
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [
+                        ctx.from.id,
+                        ctx.from.username || '',
+                        server.nama_server || 'Unknown',
+                        state.type,
+                        totalHarga,
+                        state.exp,
+                        new Date().toISOString(),
+                        state.action 
+                    ], (err) => {
+                        if (err) {
+                            logger.warn('⚠️ Gagal mencatat log penjualan:', err.message);
+                        } else {
+                            logger.info(`✅ Log penjualan dicatat: ${ctx.from.id} - ${state.type} - ${state.action} - Rp${totalHarga}`);
+                        }
+                    });
+
+                    await ctx.reply(msg, { parse_mode: 'Markdown' });
+                    delete userState[userId];
             });
         });
         return;
@@ -3112,11 +3190,24 @@ async function getUserBalance(userId) {
 
 async function sendPaymentSuccessNotification(userId, deposit, currentBalance) {
   try {
+    const saldo = await new Promise((resolve, reject) => {
+      db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], (err, row) => {
+        if (err) reject(err); else resolve(row ? row.saldo : 0);
+      });
+    });
+
+    const hasBonus = deposit.bonus && deposit.bonus > 0 && deposit.bonus_percent;
+
+    const bonusText = hasBonus
+      ? `🚀 Bonus Top Up: *Rp${deposit.bonus}* (${deposit.bonus_percent}%)\n`
+      : '';
+
     const messageText = 
       `✅ *Pembayaran Berhasil!*\n\n` +
       `💰 Nominal: Rp ${deposit.amount}\n` +
       `💳 Saldo ditambahkan: Rp ${deposit.originalAmount}\n` +
-      `🏦 Saldo sekarang: Rp ${currentBalance}`;
+      bonusText +
+      `🏦 Saldo sekarang: Rp ${saldo}`;
 
     await bot.telegram.sendMessage(userId, messageText, {
       parse_mode: 'Markdown',
@@ -3129,9 +3220,10 @@ async function sendPaymentSuccessNotification(userId, deposit, currentBalance) {
         ]
       }
     });
+
     return true;
   } catch (error) {
-    logger.error('Error sending payment notification:', error);
+    logger.error('❌ Error sending payment notification:', error);
     return false;
   }
 }
@@ -3144,39 +3236,38 @@ async function processMatchingPayment(deposit, matchingTransaction, uniqueCode) 
     }
 
     try {
-
+  
         await updateUserBalance(deposit.userId, Number(deposit.originalAmount));
 
-        db.get('SELECT * FROM bonus_config WHERE id = 1', (err, config) => {
-            if (!err && config?.enabled && deposit.originalAmount >= config.min_topup) {
-                const bonus = Math.floor(Number(deposit.originalAmount) * Number(config.bonus_percent) / 100);
-
-                db.run('UPDATE users SET saldo = saldo + ? WHERE user_id = ?', [bonus, deposit.userId]);
-                db.run('INSERT INTO bonus_log (user_id, username, amount, bonus, timestamp) VALUES (?, ?, ?, ?, ?)', [
-                    deposit.userId,
-                    deposit.username || '', 
-                    deposit.originalAmount,
-                    bonus,
-                    new Date().toISOString()
-                ]);
-
-                bot.telegram.sendMessage(deposit.userId, `🎁 *Bonus Top Up!* Kamu dapat saldo tambahan *Rp${bonus}* (${config.bonus_percent}%)`, {
-                    parse_mode: 'Markdown'
-                });
-            }
+        const config = await new Promise((resolve, reject) => {
+            db.get('SELECT * FROM bonus_config WHERE id = 1', (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
         });
 
-        async function getUserBalance(userId) {
-            return new Promise((resolve, reject) => {
-                db.get('SELECT saldo FROM users WHERE user_id = ?', [userId], (err, row) => {
-                    if (err) reject(err);
-                    else resolve(row);
-                });
-            });
+        let bonus = 0;
+        let bonusPercent = 0;
+
+        if (config?.enabled && deposit.originalAmount >= config.min_topup) {
+            bonus = Math.floor(deposit.originalAmount * config.bonus_percent / 100);
+            bonusPercent = config.bonus_percent;
+
+            deposit.bonus = bonus;
+            deposit.bonus_percent = bonusPercent;
+            prosesBonusTopUp(deposit.userId, deposit.username, deposit.originalAmount);
+        } else {
+            deposit.bonus = 0;
+            deposit.bonus_percent = 0;
         }
 
+        const userBalance = await new Promise((resolve, reject) => {
+            db.get('SELECT saldo FROM users WHERE user_id = ?', [deposit.userId], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
 
-        const userBalance = await getUserBalance(deposit.userId);
         if (!userBalance) throw new Error('User balance not found after update');
 
         const notificationSent = await sendPaymentSuccessNotification(
