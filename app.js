@@ -330,11 +330,13 @@ transaksi hanya lewat bot 🏆
 🆔 *» ID Pengguna:* \`${userId}\`
 🌐 *» Server Aktif:* \`${jumlahServer}\`
 👥 *» Total User:* \`${jumlahPengguna}\`
-━━━━━━━━━━━━━━━━━━━━━━`;
+━━━━━━━━━━━━━━━━━━━━━━
+♂️ *» Admin:* [@freenet_on](https://t.me/freenet_on)`;
 
   try {
     const sent = await ctx.reply(messageText, {
       parse_mode: 'Markdown',
+      disable_web_page_preview: true,
       reply_markup: { inline_keyboard: keyboard }
     });
     return sent;
@@ -434,32 +436,59 @@ bot.command('broadcast', async (ctx) => {
     });
   });
 });
+function formatRupiah(angka) {
+  return `Rp${(angka || 0).toLocaleString('id-ID')}`;
+}
+
 bot.action('statistik_penjualan', async (ctx) => {
-    await ctx.answerCbQuery();
+  await ctx.answerCbQuery();
 
-    db.all(`
-        SELECT tipe_akun, COUNT(*) as jumlah, SUM(harga) as total_harga 
-        FROM log_penjualan 
-        GROUP BY tipe_akun
-    `, [], (err, rows) => {
-        if (err || rows.length === 0) {
-            return ctx.reply('⚠️ Belum ada data penjualan.');
-        }
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+  const startOfWeek = new Date(new Date().setDate(today.getDate() - today.getDay())).toISOString(); // Minggu
+  const startOf7Days = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
 
-        let totalAkun = 0;
-        let totalUang = 0;
-        const hasil = rows.map(r => {
-            totalAkun += r.jumlah;
-            totalUang += r.total_harga;
-            return `📦 *${r.tipe_akun.toUpperCase()}*\nJumlah Terjual: ${r.jumlah}\nTotal: Rp${r.total_harga}`;
-        }).join('\n\n');
+  db.all(`
+    SELECT tipe_akun, COUNT(*) AS jumlah, SUM(harga) AS total_harga
+    FROM log_penjualan
+    GROUP BY tipe_akun
+  `, [], (err, rows) => {
+    if (err || rows.length === 0) {
+      return ctx.reply('⚠️ Belum ada data penjualan.');
+    }
 
-        ctx.reply(
-            `📊 *Statistik Penjualan per Tipe Akun:*\n\n${hasil}\n\n` +
-            `🧾 *Total Semua Akun Terjual:* ${totalAkun}\n💰 *Total Uang Masuk:* Rp${totalUang}`,
-            { parse_mode: 'Markdown' }
-        );
-    });
+    let totalAkun = 0;
+    let totalUang = 0;
+    const hasil = rows.map(r => {
+      totalAkun += r.jumlah;
+      totalUang += r.total_harga;
+      return `📦 *${r.tipe_akun.toUpperCase()}*\nJumlah Terjual: ${r.jumlah}\nTotal: ${formatRupiah(r.total_harga)}`;
+    }).join('\n\n');
+
+    db.get(`SELECT SUM(harga) AS total FROM log_penjualan WHERE waktu_transaksi >= ?`, [startOfToday], (err1, todayRow) => {
+    db.get(`SELECT SUM(harga) AS total FROM log_penjualan WHERE waktu_transaksi >= ?`, [startOf7Days], (err2, week7Row) => {
+    db.get(`SELECT SUM(harga) AS total FROM log_penjualan WHERE waktu_transaksi >= ?`, [startOfWeek], (err3, weekRow) => {
+    db.get(`SELECT SUM(harga) AS total FROM log_penjualan WHERE waktu_transaksi >= ?`, [startOfMonth], (err4, monthRow) => {
+
+      const totalToday = todayRow?.total || 0;
+      const total7Days = week7Row?.total || 0;
+      const totalWeek = weekRow?.total || 0;
+      const totalMonth = monthRow?.total || 0;
+
+      const message =
+        `📊 *Statistik Penjualan per Tipe Akun:*\n\n${hasil}\n\n` +
+        `🧾 *Total Semua Akun Terjual:* ${totalAkun}\n` +
+        `💰 *Total Uang Masuk:* ${formatRupiah(totalUang)}\n\n` +
+        `📅 *Hari Ini:* ${formatRupiah(totalToday)}\n` +
+        `📈 *7 Hari Terakhir:* ${formatRupiah(total7Days)}\n` +
+        `🗓️ *Minggu Ini:* ${formatRupiah(totalWeek)}\n` +
+        `📆 *Bulan Ini:* ${formatRupiah(totalMonth)}`;
+
+      ctx.reply(message, { parse_mode: 'Markdown' });
+
+    }); }); }); });
+  });
 });
 bot.command('addsaldo', async (ctx) => {
   const userId = ctx.message.from.id;
