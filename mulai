@@ -126,13 +126,15 @@ After=network.target
 
 [Service]
 ExecStart=$NODE_PATH /root/BotVPN/app-x.js
-Restart=always
-User=root
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
 WorkingDirectory=/root/BotVPN
-StandardOutput=journal
-StandardError=journal
+Restart=always
+RestartSec=3
+User=root
+Environment=NODE_ENV=production
+Environment=TZ=Asia/Jakarta
+StandardOutput=append:/var/log/sellvpn.log
+StandardError=append:/var/log/sellvpn-error.log
+LimitNOFILE=10000
 
 [Install]
 WantedBy=multi-user.target
