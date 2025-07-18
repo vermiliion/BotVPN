@@ -51,7 +51,7 @@ sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.di
    "GROUP_CHAT_ID": "your_chat_id_group", 
    "SAWERIA_USERNAME": "username_saweria",
    "SAWERIA_EMAIL": "your_saweria_Email"
-   }
+}
    ```
 
 ## Uninstall Bot
