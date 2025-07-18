@@ -40,17 +40,17 @@ sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.di
 4. konfigurasinya seperti ini
 
    ```json
-   {
-   "BOT_TOKEN": "your_telegram_bot_token",
-   "USER_ID": "your_admin_telegram_id",
-   "NAMA_STORE": "your_store_name",
-   "PORT": "50123",
-   "DATA_QRIS": "your_qris_data",
-   "MERCHANT_ID": "your_merchant_id",
-   "API_KEY": "your_api_key",
-   "GROUP_CHAT_ID": "your_chat_id_group", 
-   "SAWERIA_USERNAME": "username_saweria",
-   "SAWERIA_EMAIL": "your_saweria_Email"
+{
+  "BOT_TOKEN": "your_telegram_bot_token",
+  "USER_ID": "your_admin_telegram_id",
+  "NAMA_STORE": "your_store_name",
+  "PORT": "50123",
+  "DATA_QRIS": "your_qris_data",
+  "MERCHANT_ID": "your_merchant_id",
+  "API_KEY": "your_api_key",
+  "GROUP_CHAT_ID": "your_chat_id_group",
+  "SAWERIA_USERNAME": "username_saweria",
+  "SAWERIA_EMAIL": "your_saweria_email"
 }
    ```
 
