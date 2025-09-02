@@ -33,7 +33,7 @@ async function trialssh(username, password, exp, iplimit, serverId) {
 *│           ❇️ SSH ACCOUNT ❇️            *
 *╰─────────────────────╯*
 *╭──────────────────────╮*
-*│⚠️ *PERHATIKAN PENGUNAAN PORT*
+*│⚠️ PERHATIKAN PENGUNAAN PORT*
 *│*
 *┣Domain:* \`${sshData.domain}\`
 *┣Username:* \`${sshData.username}\`
@@ -427,7 +427,7 @@ async function createssh(username, password, exp, iplimit, serverId) {
 *│           ❇️ SSH ACCOUNT ❇️            *
 *╰─────────────────────╯*
 *╭──────────────────────╮*
-*│⚠️ *PERHATIKAN PENGUNAAN PORT*
+*│⚠️ PERHATIKAN PENGUNAAN PORT*
 *│*
 *┣Domain:* \`${sshData.domain}\`
 *┣Username:* \`${sshData.username}\`
