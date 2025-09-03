@@ -55,11 +55,9 @@ async function trialssh(username, password, exp, iplimit, serverId) {
 \`${sshData.domain}:444@${sshData.username}:${sshData.password}\`
 *SSH UDP CUSTOM:*
 \`${sshData.domain}:1-65535@${sshData.username}:${sshData.password}\`
-*╰──────────────────────╯*
 *╭──────────────────────╮*
 *Payload:* 
 \`GET /cdn-cgi/trace HTTP/1.1[crlf]Host: Bug_Kalian[crlf][crlf]GET-RAY / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]\`
-*╰──────────────────────╯*
 *╭──────────────────────╮*
 *Save Account:* [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
 *╰──────────────────────╯*
@@ -125,22 +123,13 @@ async function trialvmess(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
-\`\`\`
-${vmessData.vmess_nontls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vmessData.vmess_nontls_link}\`\`\`
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${vmessData.vmess_tls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vmessData.vmess_tls_link}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${vmessData.vmess_grpc_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vmessData.vmess_grpc_link}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
 *╰─────────────────────╯*
@@ -206,22 +195,13 @@ async function trialvless(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
-\`\`\`
-${vlessData.vless_nontls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vlessData.vless_nontls_link}\`\`\`
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${vlessData.vless_tls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vlessData.vless_tls_link}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${vlessData.vless_grpc_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vlessData.vless_grpc_link}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
 *╰─────────────────────╯*
@@ -284,16 +264,10 @@ async function trialtrojan(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${trojanData.trojan_tls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${trojanData.trojan_tls_link}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${trojanData.trojan_grpc_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${trojanData.trojan_grpc_link}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
 *╰─────────────────────╯*
@@ -358,22 +332,13 @@ async function trialshadowsocks(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
-\`\`\`
-${shadowsocksData.shadowsocks_nontls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${shadowsocksData.ss_link_nontls}\`\`\`
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${shadowsocksData.ss_link_ws}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${shadowsocksData.ss_link_ws}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${shadowsocksData.ss_link_grpc}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${shadowsocksData.ss_link_grpc}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
 *╰─────────────────────╯*
@@ -449,11 +414,9 @@ async function createssh(username, password, exp, iplimit, serverId) {
 \`${sshData.domain}:444@${sshData.username}:${sshData.password}\`
 *SSH UDP CUSTOM:*
 \`${sshData.domain}:1-65535@${sshData.username}:${sshData.password}\`
-*╰──────────────────────╯*
 *╭──────────────────────╮*
 *Payload:* 
 \`GET /cdn-cgi/trace HTTP/1.1[crlf]Host: Bug_Kalian[crlf][crlf]GET-RAY / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]\`
-*╰──────────────────────╯*
 *╭──────────────────────╮*
 *Save Account:* [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
 *╰──────────────────────╯*
@@ -517,22 +480,13 @@ async function createvmess(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
-\`\`\`
-${vmessData.vmess_nontls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vmessData.vmess_nontls_link}\`\`\`
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${vmessData.vmess_tls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vmessData.vmess_tls_link}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${vmessData.vmess_grpc_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vmessData.vmess_grpc_link}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
 *╰─────────────────────╯*
@@ -596,22 +550,13 @@ async function createvless(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
-\`\`\`
-${vlessData.vless_nontls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vlessData.vless_nontls_link}\`\`\`
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${vlessData.vless_tls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vlessData.vless_tls_link}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${vlessData.vless_grpc_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${vlessData.vless_grpc_link}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
 *╰─────────────────────╯*
@@ -673,16 +618,10 @@ async function createtrojan(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${trojanData.trojan_tls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${trojanData.trojan_tls_link}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${trojanData.trojan_grpc_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${trojanData.trojan_grpc_link}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
 *╰─────────────────────╯*
@@ -747,22 +686,13 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
-\`\`\`
-${shadowsocksData.shadowsocks_nontls_link}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${shadowsocksData.ss_link_nontls}\`\`\`
 *╭─────────────────────╮*
 *TLS:*
-\`\`\`
-${shadowsocksData.ss_link_ws}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${shadowsocksData.ss_link_ws}\`\`\`
 *╭─────────────────────╮*
 *gRPC:*
-\`\`\`
-${shadowsocksData.ss_link_grpc}
-\`\`\`
-*╰─────────────────────╯*
+\`\`\`${shadowsocksData.ss_link_grpc}\`\`\`
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
 *╰─────────────────────╯*
