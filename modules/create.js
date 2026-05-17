@@ -40,25 +40,25 @@ async function trialssh(username, password, exp, iplimit, serverId) {
 *┣Password:* \`${sshData.password}\`
 *┣Port Open SSH:* \`22\`
 *┣Dropbear:* \`109,110\`
-*┣Port SSH WS:* \`8080\`
-*┣Port SSH WS/TLS:* \`8443\`
-*┣Port SSL/TLS:* \`444\`
+*┣Port SSH WS:* \`80\`
+*┣Port SSH WS/TLS:* \`443\`
+*┣Port SSL/TLS:* \`443\`
 *┣Udp Custom:* \`1-65535\`
-*┣BadVPN:* \`7100,7200,7300\`
+*┣BadVPN:* \`7300\`
 *╰──────────────────────╯*
 *╭──────────────────────╮*
 *SSH WS:*
-\`${sshData.domain}:8080@${sshData.username}:${sshData.password}\`
+\`${sshData.domain}:80@${sshData.username}:${sshData.password}\`
 *SSH WS SSL:*
-\`${sshData.domain}:8443@${sshData.username}:${sshData.password}\`
+\`${sshData.domain}:443@${sshData.username}:${sshData.password}\`
 *SSH STUNNEL:*
-\`${sshData.domain}:444@${sshData.username}:${sshData.password}\`
+\`${sshData.domain}:443@${sshData.username}:${sshData.password}\`
 *SSH UDP CUSTOM:*
 \`${sshData.domain}:1-65535@${sshData.username}:${sshData.password}\`
+*╰─────────────────────╯*
 *╭──────────────────────╮*
 *Payload:* 
 \`GET /cdn-cgi/trace HTTP/1.1[crlf]Host: Bug_Kalian[crlf][crlf]GET-RAY / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]\`
-*╭──────────────────────╮*
 *Save Account:* [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
 *╰──────────────────────╯*
 *╭──────────────────────╮*
@@ -113,23 +113,21 @@ async function trialvmess(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${vmessData.username}\`
 *┣Domain:* \`${vmessData.domain}\`
-*┣Port None TLS*: \`80,8880,2052,2086,2095\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port None TLS*: \`80\`
+*┣Port TLS:* \`443\`
 *┣UUID:* \`${vmessData.uuid}\`
 *┣Alter ID:* \`0\`
 *┣Security:* \`Auto\`
 *┣Path:* \`/vmess\`
-*┣Path gRPC:* \`vmess-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
 \`\`\`${vmessData.vmess_nontls_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${vmessData.vmess_tls_link}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${vmessData.vmess_grpc_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
 *╰─────────────────────╯*
@@ -186,22 +184,20 @@ async function trialvless(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${vlessData.username}\`
 *┣Domain:* \`${vlessData.domain}\`
-*┣Port None TLS*: \`80,8880,2052,2086,2095\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port None TLS*: \`80\`
+*┣Port TLS:* \`443\`
 *┣UUID:* \`${vlessData.uuid}\`
 *┣Security:* \`None\`
 *┣Path:* \`/vless\`
-*┣Path gRPC:* \`vless-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
 \`\`\`${vlessData.vless_nontls_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${vlessData.vless_tls_link}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${vlessData.vless_grpc_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
 *╰─────────────────────╯*
@@ -257,17 +253,14 @@ async function trialtrojan(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${trojanData.username}\`
 *┣Domain:* \`${trojanData.domain}\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port TLS:* \`443\`
 *┣Password:* \`${trojanData.uuid}\`
 *┣Path:* \`/trojan\`
-*┣Path gRPC:* \`trojan-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${trojanData.trojan_tls_link}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${trojanData.trojan_grpc_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
 *╰─────────────────────╯*
@@ -323,22 +316,20 @@ async function trialshadowsocks(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${shadowsocksData.username}\`
 *┣Domain:* \`${shadowsocksData.domain}\`
-*┣Port None TLS*: \`80,8880,2052,2086,2095\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port None TLS*: \`80\`
+*┣Port TLS:* \`443\`
 *┣Password:* \`${shadowsocksData.uuid}\`
 *┣Security:* \`aes-128-gcm\`
 *┣Path:* \`/shadowsocks\`
-*┣Path gRPC:* \`shadowsocks-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
 \`\`\`${shadowsocksData.ss_link_nontls}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${shadowsocksData.ss_link_ws}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${shadowsocksData.ss_link_grpc}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
 *╰─────────────────────╯*
@@ -399,25 +390,24 @@ async function createssh(username, password, exp, iplimit, serverId) {
 *┣Password:* \`${sshData.password}\`
 *┣Port Open SSH:* \`22\`
 *┣Dropbear:* \`109,110\`
-*┣Port SSH WS:* \`8080\`
-*┣Port SSH WS/TLS:* \`8443\`
-*┣Port SSL/TLS:* \`444\`
+*┣Port SSH WS:* \`80\`
+*┣Port SSH WS/TLS:* \`443\`
+*┣Port SSL/TLS:* \`443\`
 *┣Udp Custom:* \`1-65535\`
-*┣BadVPN:* \`7100,7200,7300\`
+*┣BadVPN:* \`7300\`
 *╰──────────────────────╯*
 *╭──────────────────────╮*
 *SSH WS:*
-\`${sshData.domain}:8080@${sshData.username}:${sshData.password}\`
+\`${sshData.domain}:80@${sshData.username}:${sshData.password}\`
 *SSH WS SSL:*
-\`${sshData.domain}:8443@${sshData.username}:${sshData.password}\`
+\`${sshData.domain}:443@${sshData.username}:${sshData.password}\`
 *SSH STUNNEL:*
-\`${sshData.domain}:444@${sshData.username}:${sshData.password}\`
+\`${sshData.domain}:443@${sshData.username}:${sshData.password}\`
 *SSH UDP CUSTOM:*
 \`${sshData.domain}:1-65535@${sshData.username}:${sshData.password}\`
 *╭──────────────────────╮*
 *Payload:* 
 \`GET /cdn-cgi/trace HTTP/1.1[crlf]Host: Bug_Kalian[crlf][crlf]GET-RAY / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf]Upgrade: websocket[crlf][crlf]\`
-*╭──────────────────────╮*
 *Save Account:* [Click Link](https://${sshData.domain}:81/ssh-${sshData.username}.txt)
 *╰──────────────────────╯*
 *╭──────────────────────╮*
@@ -470,23 +460,20 @@ async function createvmess(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${vmessData.username}\`
 *┣Domain:* \`${vmessData.domain}\`
-*┣Port None TLS*: \`80,8880,2052,2086,2095\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port None TLS*: \`80\`
+*┣Port TLS:* \`443\`
 *┣UUID:* \`${vmessData.uuid}\`
 *┣Alter ID:* \`0\`
 *┣Security:* \`Auto\`
 *┣Path:* \`/vmess\`
-*┣Path gRPC:* \`vmess-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
 \`\`\`${vmessData.vmess_nontls_link}\`\`\`
-*╭─────────────────────╮*
+*╰─────────────────────╯*
 *TLS:*
 \`\`\`${vmessData.vmess_tls_link}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${vmessData.vmess_grpc_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vmessData.domain}:81/vmess-${vmessData.username}.txt)
 *╰─────────────────────╯*
@@ -541,22 +528,20 @@ async function createvless(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${vlessData.username}\`
 *┣Domain:* \`${vlessData.domain}\`
-*┣Port None TLS*: \`80,8880,2052,2086,2095\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port None TLS*: \`80\`
+*┣Port TLS:* \`443\`
 *┣UUID:* \`${vlessData.uuid}\`
 *┣Security:* \`None\`
 *┣Path:* \`/vless\`
-*┣Path gRPC:* \`vless-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
 \`\`\`${vlessData.vless_nontls_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${vlessData.vless_tls_link}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${vlessData.vless_grpc_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${vlessData.domain}:81/vless-${vlessData.username}.txt)
 *╰─────────────────────╯*
@@ -611,17 +596,14 @@ async function createtrojan(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${trojanData.username}\`
 *┣Domain:* \`${trojanData.domain}\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port TLS:* \`443\`
 *┣Password:* \`${trojanData.uuid}\`
 *┣Path:* \`/trojan\`
-*┣Path gRPC:* \`trojan-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${trojanData.trojan_tls_link}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${trojanData.trojan_grpc_link}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${trojanData.domain}:81/trojan-${trojanData.username}.txt)
 *╰─────────────────────╯*
@@ -677,22 +659,20 @@ async function createshadowsocks(username, exp, quota, limitip, serverId) {
 *╭─────────────────────╮*
 *┣Username:* \`${shadowsocksData.username}\`
 *┣Domain:* \`${shadowsocksData.domain}\`
-*┣Port None TLS*: \`80,8880,2052,2086,2095\`
-*┣Port TLS:* \`443,2053,2087,2096\`
+*┣Port None TLS*: \`80\`
+*┣Port TLS:* \`443\`
 *┣Password:* \`${shadowsocksData.uuid}\`
 *┣Security:* \`aes-128-gcm\`
 *┣Path:* \`/shadowsocks\`
-*┣Path gRPC:* \`shadowsocks-grpc\`
 *╰─────────────────────╯*
 *╭─────────────────────╮*
 *None TLS:*
 \`\`\`${shadowsocksData.ss_link_nontls}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *TLS:*
 \`\`\`${shadowsocksData.ss_link_ws}\`\`\`
-*╭─────────────────────╮*
-*gRPC:*
-\`\`\`${shadowsocksData.ss_link_grpc}\`\`\`
+*╰─────────────────────╯*
 *╭─────────────────────╮*
 *Save Account:* [Click Link](https://${shadowsocksData.domain}:81/shadowsocks-${shadowsocksData.username}.txt)
 *╰─────────────────────╯*
